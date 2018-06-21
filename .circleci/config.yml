@@ -6,11 +6,6 @@ jobs:
     steps:
       - checkout
       - run: mvn dependency:go-offline
-  test:
-    docker:
-      - image: circleci/openjdk:8
-    steps:
-      - checkout
       - run: mvn verify
   deploy:
     docker:
@@ -18,12 +13,17 @@ jobs:
     steps:
       - checkout
       - run: if [ -z "${CI_PULL_REQUEST}" ]; then mvn deploy -P deploy -s settings.xml; fi
+
 workflows:
   version: 2
   test-and-deploy:
     jobs:
-      - test
+      - build
       - deploy:
         filters:
           branches:
             only: master
+
+# ask josh how to install missing dependency
+# yml file is valid
+# installed maven ran " mvn dependency:go-offline"  and got the same error as building locally. Command is wrong??? 

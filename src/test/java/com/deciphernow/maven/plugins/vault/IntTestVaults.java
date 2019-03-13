@@ -72,8 +72,9 @@ public class IntTestVaults {
     private Fixture() throws URISyntaxException {
       List<Path> paths = randomPaths(10, 10);
       File certificate = new File(VAULT_CERTIFICATE.toURI());
+      boolean skipExecution = false;
       System.out.println(String.format("%s/%s", VAULT_SERVER, VAULT_TOKEN));
-      this.servers = ImmutableList.of(new Server(VAULT_SERVER, VAULT_TOKEN, true, certificate, paths));
+      this.servers = ImmutableList.of(new Server(VAULT_SERVER, VAULT_TOKEN, true, certificate, paths, skipExecution));
       this.properties = new Properties();
       this.servers.stream().forEach(server -> {
         server.getPaths().stream().forEach(path -> {

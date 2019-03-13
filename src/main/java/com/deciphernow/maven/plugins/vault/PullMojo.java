@@ -33,6 +33,9 @@ public class PullMojo extends VaultMojo {
    * @throws MojoExecutionException if an exception is thrown based upon the project configuration
    */
   public void execute() throws MojoExecutionException {
+    if (this.skipExecution) {
+      return;
+    }
     try {
       Vaults.pull(this.servers, this.project.getProperties());
     } catch (VaultException exception) {

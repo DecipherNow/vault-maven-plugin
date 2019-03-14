@@ -52,7 +52,8 @@ public class Server implements Serializable {
    * @param sslCertificate the SSL certificate file or null
    * @param paths the paths for the server
    */
-  public Server(String url, String token, boolean sslVerify, File sslCertificate, List<Path> paths, boolean skipExecution) {
+  public Server(String url, String token, boolean sslVerify, File sslCertificate, List<Path> paths,
+                boolean skipExecution) {
     this.paths = paths;
     this.sslCertificate = sslCertificate;
     this.sslVerify = sslVerify;
@@ -107,7 +108,7 @@ public class Server implements Serializable {
   }
 
   /**
-   * Indicates if server execution should be skipped
+   * Indicates if server execution should be skipped.
    *
    * @return the skipExecution
    */

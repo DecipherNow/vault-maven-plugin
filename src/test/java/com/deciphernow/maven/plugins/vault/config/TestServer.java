@@ -37,9 +37,10 @@ public class TestServer {
   private static final List<Path> PATHS = randomPaths(10, 10);
   private static final File SSL_CERTIFICATE = new File("/dev/null");
   private static final boolean SSL_VERIFY = RANDOM.nextBoolean();
+  private static final boolean SKIP_EXECUTION = RANDOM.nextBoolean();
   private static final String TOKEN = UUID.randomUUID().toString();
   private static final String URL = UUID.randomUUID().toString();
-  private static final Server INSTANCE = new Server(URL, TOKEN, SSL_VERIFY, SSL_CERTIFICATE, PATHS);
+  private static final Server INSTANCE = new Server(URL, TOKEN, SSL_VERIFY, SSL_CERTIFICATE, PATHS, SKIP_EXECUTION);
 
   private static Path randomPath(int mappingCount) {
     return new Path(UUID.randomUUID().toString(), randomMappings(mappingCount));
@@ -82,6 +83,14 @@ public class TestServer {
   }
 
   /**
+   * Tests the {@link Server#isSkipExecution()} property.
+   */
+  @Test
+  public void testIsSkipExecution() {
+    assertEquals(SKIP_EXECUTION, INSTANCE.isSkipExecution());
+  }
+
+  /**
    * Tests the {@link Server#getToken()} property.
    */
   @Test
@@ -103,12 +112,12 @@ public class TestServer {
   @Test
   public void testEquality() {
     EqualsTester tester = new EqualsTester();
-    tester.addEqualityGroup(INSTANCE, INSTANCE, new Server(URL, TOKEN, SSL_VERIFY, SSL_CERTIFICATE, PATHS));
-    tester.addEqualityGroup(new Server(UUID.randomUUID().toString(), TOKEN, SSL_VERIFY, SSL_CERTIFICATE, PATHS));
-    tester.addEqualityGroup(new Server(URL, UUID.randomUUID().toString(), SSL_VERIFY, SSL_CERTIFICATE, PATHS));
-    tester.addEqualityGroup(new Server(URL, TOKEN, !SSL_VERIFY, SSL_CERTIFICATE, PATHS));
-    tester.addEqualityGroup(new Server(URL, TOKEN, SSL_VERIFY, new File("/dev/random"), PATHS));
-    tester.addEqualityGroup(new Server(URL, TOKEN, SSL_VERIFY, SSL_CERTIFICATE, randomPaths(10, 10)));
+    tester.addEqualityGroup(INSTANCE, INSTANCE, new Server(URL, TOKEN, SSL_VERIFY, SSL_CERTIFICATE, PATHS, SKIP_EXECUTION));
+    tester.addEqualityGroup(new Server(UUID.randomUUID().toString(), TOKEN, SSL_VERIFY, SSL_CERTIFICATE, PATHS, SKIP_EXECUTION));
+    tester.addEqualityGroup(new Server(URL, UUID.randomUUID().toString(), SSL_VERIFY, SSL_CERTIFICATE, PATHS, SKIP_EXECUTION));
+    tester.addEqualityGroup(new Server(URL, TOKEN, !SSL_VERIFY, SSL_CERTIFICATE, PATHS, SKIP_EXECUTION));
+    tester.addEqualityGroup(new Server(URL, TOKEN, SSL_VERIFY, new File("/dev/random"), PATHS, SKIP_EXECUTION));
+    tester.addEqualityGroup(new Server(URL, TOKEN, SSL_VERIFY, SSL_CERTIFICATE, randomPaths(10, 10), SKIP_EXECUTION));
     tester.testEquals();
   }
 
@@ -126,12 +135,13 @@ public class TestServer {
       try (ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
            ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream)) {
 
-        Server deserailized = (Server) objectInputStream.readObject();
-        assertEquals(PATHS, deserailized.getPaths());
-        assertEquals(SSL_CERTIFICATE, deserailized.getSslCertificate());
-        assertEquals(SSL_VERIFY, deserailized.getSslVerify());
-        assertEquals(TOKEN, deserailized.getToken());
-        assertEquals(URL, deserailized.getUrl());
+        Server deserialized = (Server) objectInputStream.readObject();
+        assertEquals(PATHS, deserialized.getPaths());
+        assertEquals(SSL_CERTIFICATE, deserialized.getSslCertificate());
+        assertEquals(SSL_VERIFY, deserialized.getSslVerify());
+        assertEquals(TOKEN, deserialized.getToken());
+        assertEquals(URL, deserialized.getUrl());
+        assertEquals(SKIP_EXECUTION, deserialized.isSkipExecution());
       }
     }
   }

@@ -1,0 +1,73 @@
+version: 2
+
+defaults: &defaults
+  machine: true
+  working_directory: ~/deciphernow/vault-maven-plugin
+  parallelism: 1
+  shell: /bin/bash --login
+
+jobs:
+  cache:
+    <<: *defaults
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - cache-{{ .Branch }}-{{ .Revision }}
+            - cache-{{ .Branch }}
+            - cache
+      - run: mvn dependency:go-offline
+      - save_cache:
+          key: cache-{{ .Branch }}-{{ .Revision }}
+          paths:
+            - "~/.m2"
+
+  build:
+    <<: *defaults
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - cache-{{ .Branch }}-{{ .Revision }}
+            - cache-{{ .Branch }}
+            - cache
+      - run: mvn verify
+
+  deploy:
+    <<: *defaults
+    steps:
+       - checkout
+       - restore_cache:
+           keys:
+             - cache-{{ .Branch }}-{{ .Revision }}
+             - cache-{{ .Branch }}
+             - cache
+       - run: PGP_RINGS="$(echo ${PGP_RINGS_ENCODED} | base64 --decode)" mvn deploy -P deploy -s settings.xml
+
+workflows:
+  version: 2
+  build-and-deploy:
+    jobs:
+      - cache:
+          filters:
+            tags:
+              only: /.*/
+            branches:
+              only: /.*/
+      - build:
+          requires:
+            - cache
+          filters:
+            tags:
+              only: /.*/
+            branches:
+              only: /.*/
+      - deploy:
+          requires:
+            - cache
+            - build
+          filters:
+            tags:
+              ignore: /.*/
+            branches:
+              only: master

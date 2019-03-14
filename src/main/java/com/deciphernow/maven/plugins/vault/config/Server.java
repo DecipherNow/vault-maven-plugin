@@ -36,6 +36,8 @@ public class Server implements Serializable {
 
   private List<Path> paths;
 
+  private boolean skipExecution;
+
   /**
    * Initializes a new instance of the {@link Server} class.
    */
@@ -50,12 +52,14 @@ public class Server implements Serializable {
    * @param sslCertificate the SSL certificate file or null
    * @param paths the paths for the server
    */
-  public Server(String url, String token, boolean sslVerify, File sslCertificate, List<Path> paths) {
+  public Server(String url, String token, boolean sslVerify, File sslCertificate, List<Path> paths,
+                boolean skipExecution) {
     this.paths = paths;
     this.sslCertificate = sslCertificate;
     this.sslVerify = sslVerify;
     this.token = token;
     this.url = url;
+    this.skipExecution = skipExecution;
   }
 
   /**
@@ -104,12 +108,21 @@ public class Server implements Serializable {
   }
 
   /**
+   * Indicates if server execution should be skipped.
+   *
+   * @return the skipExecution
+   */
+  public boolean isSkipExecution() {
+    return skipExecution;
+  }
+
+  /**
    * Returns a hash code value for this server.
    *
    * @return the hash code
    */
   public int hashCode() {
-    return Objects.hash(this.sslCertificate, this.sslVerify, this.token, this.url, this.paths);
+    return Objects.hash(this.sslCertificate, this.sslVerify, this.token, this.url, this.paths, this.skipExecution);
   }
 
   /**
@@ -122,6 +135,7 @@ public class Server implements Serializable {
       Server that = (Server) object;
       return Objects.equals(this.paths, that.paths)
           && Objects.equals(this.sslVerify, that.sslVerify)
+          && Objects.equals(this.skipExecution, that.skipExecution)
           && Objects.equals(this.sslCertificate, that.sslCertificate)
           && Objects.equals(this.token, that.token)
           && Objects.equals(this.url, that.url);

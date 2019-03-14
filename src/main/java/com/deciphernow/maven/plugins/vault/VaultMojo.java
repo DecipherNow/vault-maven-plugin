@@ -34,4 +34,6 @@ abstract class VaultMojo extends AbstractMojo {
   @Parameter(required = true)
   protected List<Server> servers;
 
+  @Parameter(property = "skipExecution", defaultValue = "false")
+  protected boolean skipExecution;
 }

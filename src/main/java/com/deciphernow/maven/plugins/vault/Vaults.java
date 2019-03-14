@@ -59,6 +59,9 @@ public final class Vaults {
    */
   public static void pull(List<Server> servers, Properties properties) throws VaultException {
     for (Server server : servers) {
+      if (server.isSkipExecution()) {
+        continue;
+      }
       Vault vault = vault(server.getUrl(), server.getToken(), server.getSslVerify(), server.getSslCertificate());
       for (Path path : server.getPaths()) {
         Map<String, String> secrets = get(vault, path.getName());
@@ -82,6 +85,9 @@ public final class Vaults {
    */
   public static void push(List<Server> servers, Properties properties) throws VaultException {
     for (Server server : servers) {
+      if (server.isSkipExecution()) {
+        continue;
+      }
       Vault vault = vault(server.getUrl(), server.getToken(), server.getSslVerify(), server.getSslCertificate());
       for (Path path : server.getPaths()) {
         Map<String, String> secrets = exists(vault, path.getName()) ? get(vault, path.getName()) : new HashMap<>();

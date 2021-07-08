@@ -16,19 +16,21 @@
 
 package com.deciphernow.maven.plugins.vault;
 
-import com.bettercloud.vault.Vault;
-import com.bettercloud.vault.VaultConfig;
-import com.bettercloud.vault.VaultException;
-import com.deciphernow.maven.plugins.vault.config.Mapping;
-import com.deciphernow.maven.plugins.vault.config.Path;
-import com.deciphernow.maven.plugins.vault.config.Server;
-
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Properties;
+
+import com.deciphernow.maven.plugins.vault.config.Mapping;
+import com.deciphernow.maven.plugins.vault.config.Path;
+import com.deciphernow.maven.plugins.vault.config.Server;
+
+import com.bettercloud.vault.SslConfig;
+import com.bettercloud.vault.Vault;
+import com.bettercloud.vault.VaultConfig;
+import com.bettercloud.vault.VaultException;
 
 /**
  * Provides static methods for working with Vault.
@@ -48,7 +50,8 @@ public final class Vaults {
   /**
    * Initializes a new instance of the {@link Vaults} class.
    */
-  private Vaults() {}
+  private Vaults() {
+  }
 
   /**
    * Pulls secrets from one or more Vault servers and paths and updates a {@link Properties} instance with the values.
@@ -62,7 +65,8 @@ public final class Vaults {
       if (server.isSkipExecution()) {
         continue;
       }
-      Vault vault = vault(server.getUrl(), server.getToken(), server.getSslVerify(), server.getSslCertificate());
+      Vault vault = vault(server.getUrl(), server.getToken(), server.getKvVersion(), server.getSslVerify(),
+              server.getSslCertificate());
       for (Path path : server.getPaths()) {
         Map<String, String> secrets = get(vault, path.getName());
         for (Mapping mapping : path.getMappings()) {
@@ -88,7 +92,8 @@ public final class Vaults {
       if (server.isSkipExecution()) {
         continue;
       }
-      Vault vault = vault(server.getUrl(), server.getToken(), server.getSslVerify(), server.getSslCertificate());
+      Vault vault = vault(server.getUrl(), server.getToken(), server.getKvVersion(), server.getSslVerify(),
+              server.getSslCertificate());
       for (Path path : server.getPaths()) {
         Map<String, String> secrets = exists(vault, path.getName()) ? get(vault, path.getName()) : new HashMap<>();
         for (Mapping mapping : path.getMappings()) {
@@ -112,7 +117,7 @@ public final class Vaults {
    * @throws VaultException if an exception is thrown connecting to vault
    */
   private static boolean exists(Vault vault, String path) throws VaultException {
-    return !vault.logical().list(path).isEmpty();
+    return !vault.logical().list(path).getData().isEmpty();
   }
 
   /**
@@ -137,8 +142,8 @@ public final class Vaults {
    * @return the data
    * @throws VaultException if an exception is thrown connecting to vault or the path does not exist
    */
-  private static void set(Vault vault, String path, Map<String, String> secrets) throws VaultException {
-    vault.logical().write(path, secrets);
+  private static void set(Vault vault, String path, Map<String, ? extends Object> secrets) throws VaultException {
+    vault.logical().write(path, (Map<String, Object>) secrets);
   }
 
   /**
@@ -146,23 +151,31 @@ public final class Vaults {
    *
    * @param server the server
    * @param token the token
+   * @param kvVersion kv engine version
    * @param sslCertificate the certificate file or null if not needed
    * @param sslVerify {@code true} if the connection should be verified; otherwise, {@code false}
    * @return the vault
    */
   private static Vault vault(String server,
                              String token,
-                             boolean sslVerify,
+                             int kvVersion, boolean sslVerify,
                              File sslCertificate) throws VaultException {
+    final SslConfig sslConfig;
+    if (sslVerify) {
+      sslConfig = new SslConfig();
+      sslConfig.pemFile(sslCertificate);
+    } else {
+      sslConfig = null;
+    }
+
     VaultConfig vaultConfig = new VaultConfig()
         .address(server)
         .openTimeout(OPEN_TIMEOUT)
         .readTimeout(READ_TIMEOUT)
-        .sslVerify(sslVerify)
-        .token(token);
-    if (sslCertificate != null) {
-      vaultConfig.sslPemFile(sslCertificate);
-    }
+        .sslConfig(sslConfig)
+        .token(token)
+        .engineVersion(kvVersion)
+        .build();
     return new Vault(vaultConfig);
   }
 

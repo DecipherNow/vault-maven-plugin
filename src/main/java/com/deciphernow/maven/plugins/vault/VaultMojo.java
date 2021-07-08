@@ -36,4 +36,5 @@ abstract class VaultMojo extends AbstractMojo {
 
   @Parameter(property = "skipExecution", defaultValue = "false")
   protected boolean skipExecution;
+
 }

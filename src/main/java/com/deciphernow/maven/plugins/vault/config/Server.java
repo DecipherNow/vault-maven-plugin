@@ -38,10 +38,13 @@ public class Server implements Serializable {
 
   private boolean skipExecution;
 
+  private int kvVersion = 2;
+
   /**
    * Initializes a new instance of the {@link Server} class.
    */
-  public Server() { }
+  public Server() {
+  }
 
   /**
    * Initializes a new instance of the {@link Server} class.
@@ -52,13 +55,14 @@ public class Server implements Serializable {
    * @param sslCertificate the SSL certificate file or null
    * @param paths the paths for the server
    */
-  public Server(String url, String token, boolean sslVerify, File sslCertificate, List<Path> paths,
+  public Server(String url, String token, int kvVersion, boolean sslVerify, File sslCertificate, List<Path> paths,
                 boolean skipExecution) {
     this.paths = paths;
     this.sslCertificate = sslCertificate;
     this.sslVerify = sslVerify;
     this.token = token;
     this.url = url;
+    this.kvVersion = kvVersion;
     this.skipExecution = skipExecution;
   }
 
@@ -108,6 +112,14 @@ public class Server implements Serializable {
   }
 
   /**
+   * Gets the KV version of this secret.
+   * @return the version
+   */
+  public int getKvVersion() {
+    return this.kvVersion;
+  }
+
+  /**
    * Indicates if server execution should be skipped.
    *
    * @return the skipExecution
@@ -121,8 +133,10 @@ public class Server implements Serializable {
    *
    * @return the hash code
    */
-  public int hashCode() {
-    return Objects.hash(this.sslCertificate, this.sslVerify, this.token, this.url, this.paths, this.skipExecution);
+  @Override
+public int hashCode() {
+    return Objects.hash(this.sslCertificate, this.sslVerify, this.token, this.url, this.kvVersion,
+            this.paths, this.skipExecution);
   }
 
   /**
@@ -130,7 +144,8 @@ public class Server implements Serializable {
    *
    * @return {@code true} if the this server is equal to the object; otherwise, {@code false}
    */
-  public boolean equals(Object object) {
+  @Override
+public boolean equals(Object object) {
     if (object instanceof Server) {
       Server that = (Server) object;
       return Objects.equals(this.paths, that.paths)
@@ -138,6 +153,7 @@ public class Server implements Serializable {
           && Objects.equals(this.skipExecution, that.skipExecution)
           && Objects.equals(this.sslCertificate, that.sslCertificate)
           && Objects.equals(this.token, that.token)
+          && Objects.equals(this.kvVersion, that.kvVersion)
           && Objects.equals(this.url, that.url);
     }
     return false;

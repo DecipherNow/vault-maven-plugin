@@ -31,7 +31,8 @@ public class Mapping implements Serializable {
   /**
    * Initializes a new instance of the {@link Mapping} class.
    */
-  public Mapping() { }
+  public Mapping() {
+  }
 
   /**
    * Initializes a new instance of the {@link Mapping} class.
@@ -67,7 +68,8 @@ public class Mapping implements Serializable {
    *
    * @return the hash code
    */
-  public int hashCode() {
+  @Override
+public int hashCode() {
     return Objects.hash(this.key, this.property);
   }
 
@@ -76,7 +78,8 @@ public class Mapping implements Serializable {
    *
    * @return {@code true} if the this mapping is equal to the object; otherwise, {@code false}
    */
-  public boolean equals(Object object) {
+  @Override
+public boolean equals(Object object) {
     if (object instanceof Mapping) {
       Mapping that = (Mapping) object;
       return Objects.equals(this.key, that.key)

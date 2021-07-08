@@ -46,6 +46,7 @@ public class IntTestPullMojo {
   private static final String VAULT_PORT = System.getProperty("vault.port", "443");
   private static final String VAULT_SERVER = String.format("https://%s:%s", VAULT_HOST, VAULT_PORT);
   private static final String VAULT_TOKEN = System.getProperty("vault.token");
+  private static final int KV_VERSION = Integer.parseInt(System.getProperty("vault.kv.version", "2"));
 
   private static Mapping randomMapping() {
     return new Mapping(UUID.randomUUID().toString(), UUID.randomUUID().toString());
@@ -72,7 +73,7 @@ public class IntTestPullMojo {
       List<Path> paths = randomPaths(10, 10);
       File certificate = new File(VAULT_CERTIFICATE.toURI());
       System.out.println(String.format("%s/%s", VAULT_SERVER, VAULT_TOKEN));
-      this.servers = ImmutableList.of(new Server(VAULT_SERVER, VAULT_TOKEN, true, certificate, paths, false));
+      this.servers = ImmutableList.of(new Server(VAULT_SERVER, VAULT_TOKEN, KV_VERSION, true, certificate, paths, false));
       this.properties = new Properties();
       this.servers.stream().forEach(server -> {
         server.getPaths().stream().forEach(path -> {

@@ -22,7 +22,7 @@
 
     <groupId>com.deciphernow</groupId>
     <artifactId>vault-maven-plugin</artifactId>
-    <version>1.1.1-SNAPSHOT</version>
+    <version>2.0.0-SNAPSHOT</version>
     <packaging>maven-plugin</packaging>
 
     <name>Vault Maven Plugin</name>
@@ -74,13 +74,13 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <version.bouncycastle.plugin>1.0.0</version.bouncycastle.plugin>
-        <version.checkstyle.plugin>2.17</version.checkstyle.plugin>
-        <version.compiler.plugin>3.6.1</version.compiler.plugin>
+        <version.checkstyle.plugin>3.1.2</version.checkstyle.plugin>
+        <version.compiler.plugin>3.8.1</version.compiler.plugin>
         <version.docker.plugin>0.20.1</version.docker.plugin>
         <version.failsafe.plugin>${version.surefire.plugin}</version.failsafe.plugin>
         <version.freemarker>2.3.23</version.freemarker>
         <version.guava>19.0</version.guava>
-        <version.jacoco>0.7.9</version.jacoco>
+        <version.jacoco>0.8.7</version.jacoco>
         <version.jacoco.plugin>${version.jacoco}</version.jacoco.plugin>
         <version.java.source>1.8</version.java.source>
         <version.java.target>1.8</version.java.target>
@@ -96,7 +96,7 @@
         <version.source.plugin>3.0.1</version.source.plugin>
         <version.surefire.plugin>2.19.1</version.surefire.plugin>
         <version.vault>0.6.5</version.vault>
-        <version.vault.driver>2.0.0</version.vault.driver>
+        <version.vault.driver>5.1.0</version.vault.driver>
     </properties>
 
     <dependencies>
@@ -181,7 +181,7 @@
 
     <build>
         <plugins>
-            <plugin>
+             <plugin>
                 <groupId>io.fabric8</groupId>
                 <artifactId>docker-maven-plugin</artifactId>
                 <version>${version.docker.plugin}</version>
@@ -245,7 +245,7 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
+             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
                 <version>${version.checkstyle.plugin}</version>

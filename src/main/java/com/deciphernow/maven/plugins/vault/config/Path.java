@@ -32,7 +32,8 @@ public class Path implements Serializable {
   /**
    * Initializes a new instance of the {@link Path} class.
    */
-  public Path() { }
+  public Path() {
+  }
 
   /**
    * Initializes a new instance of the {@link Path} class.
@@ -68,7 +69,8 @@ public class Path implements Serializable {
    *
    * @return the hash code
    */
-  public int hashCode() {
+  @Override
+public int hashCode() {
     return Objects.hash(this.name, this.mappings);
   }
 
@@ -77,7 +79,8 @@ public class Path implements Serializable {
    *
    * @return {@code true} if the this path is equal to the object; otherwise, {@code false}
    */
-  public boolean equals(Object object) {
+  @Override
+public boolean equals(Object object) {
     if (object instanceof Path) {
       Path that = (Path) object;
       return Objects.equals(this.name, that.name)

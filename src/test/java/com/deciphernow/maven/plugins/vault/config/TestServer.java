@@ -40,7 +40,7 @@ public class TestServer {
   private static final boolean SKIP_EXECUTION = RANDOM.nextBoolean();
   private static final String TOKEN = UUID.randomUUID().toString();
   private static final String URL = UUID.randomUUID().toString();
-  private static final Server INSTANCE = new Server(URL, TOKEN, SSL_VERIFY, SSL_CERTIFICATE, PATHS, SKIP_EXECUTION);
+  private static final Server INSTANCE = new Server(URL, TOKEN, 2, SSL_VERIFY, SSL_CERTIFICATE, PATHS, SKIP_EXECUTION);
 
   private static Path randomPath(int mappingCount) {
     return new Path(UUID.randomUUID().toString(), randomMappings(mappingCount));

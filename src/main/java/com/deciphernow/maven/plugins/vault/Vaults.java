@@ -16,6 +16,9 @@
 
 package com.deciphernow.maven.plugins.vault;
 
+import com.google.common.base.Strings;
+
+import com.bettercloud.vault.SslConfig;
 import com.bettercloud.vault.Vault;
 import com.bettercloud.vault.VaultConfig;
 import com.bettercloud.vault.VaultException;
@@ -62,7 +65,8 @@ public final class Vaults {
       if (server.isSkipExecution()) {
         continue;
       }
-      Vault vault = vault(server.getUrl(), server.getToken(), server.getSslVerify(), server.getSslCertificate());
+      Vault vault = vault(server.getUrl(), server.getToken(), server.getNamespace(),
+              server.getSslVerify(), server.getSslCertificate());
       for (Path path : server.getPaths()) {
         Map<String, String> secrets = get(vault, path.getName());
         for (Mapping mapping : path.getMappings()) {
@@ -88,7 +92,8 @@ public final class Vaults {
       if (server.isSkipExecution()) {
         continue;
       }
-      Vault vault = vault(server.getUrl(), server.getToken(), server.getSslVerify(), server.getSslCertificate());
+      Vault vault = vault(server.getUrl(), server.getToken(), server.getNamespace(),
+              server.getSslVerify(), server.getSslCertificate());
       for (Path path : server.getPaths()) {
         Map<String, String> secrets = exists(vault, path.getName()) ? get(vault, path.getName()) : new HashMap<>();
         for (Mapping mapping : path.getMappings()) {
@@ -112,7 +117,7 @@ public final class Vaults {
    * @throws VaultException if an exception is thrown connecting to vault
    */
   private static boolean exists(Vault vault, String path) throws VaultException {
-    return !vault.logical().list(path).isEmpty();
+    return !vault.logical().list(path).getData().isEmpty();
   }
 
   /**
@@ -138,7 +143,8 @@ public final class Vaults {
    * @throws VaultException if an exception is thrown connecting to vault or the path does not exist
    */
   private static void set(Vault vault, String path, Map<String, String> secrets) throws VaultException {
-    vault.logical().write(path, secrets);
+    Map<String,Object> nameValuePairs = (Map) secrets;
+    vault.logical().write(path, nameValuePairs);
   }
 
   /**
@@ -152,18 +158,43 @@ public final class Vaults {
    */
   private static Vault vault(String server,
                              String token,
+                             String namespace,
                              boolean sslVerify,
                              File sslCertificate) throws VaultException {
-    VaultConfig vaultConfig = new VaultConfig()
-        .address(server)
-        .openTimeout(OPEN_TIMEOUT)
-        .readTimeout(READ_TIMEOUT)
-        .sslVerify(sslVerify)
-        .token(token);
+
+
+    return new Vault(vaultConfig(server,token,namespace,sslVerify,sslCertificate));
+  }
+
+
+  /**
+   * Returns a configured instance of the {@link VaultConfig} class.
+   * @param server the server
+   * @param token the token
+   * @param namespace the namespace
+   * @param sslVerify {@code true} if the connection should be verified; otherwise, {@code false}
+   * @param sslCertificate the certificate file or null if not needed
+   * @return the vaultConfig
+   */
+  public static VaultConfig vaultConfig(String server,
+                                        String token,
+                                        String namespace,
+                                        boolean sslVerify,
+                                        File sslCertificate) throws VaultException {
+    SslConfig sslConfig = new SslConfig().verify(sslVerify);
     if (sslCertificate != null) {
-      vaultConfig.sslPemFile(sslCertificate);
+      sslConfig.pemFile(sslCertificate);
     }
-    return new Vault(vaultConfig);
+    VaultConfig vaultConfig = new VaultConfig()
+            .address(server)
+            .openTimeout(OPEN_TIMEOUT)
+            .readTimeout(READ_TIMEOUT)
+            .sslConfig(sslConfig)
+            .token(token);
+    if (!Strings.isNullOrEmpty(namespace)) {
+      vaultConfig.nameSpace(namespace);
+    }
+    return vaultConfig;
   }
 
 }

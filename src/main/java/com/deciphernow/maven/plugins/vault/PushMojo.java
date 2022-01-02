@@ -32,7 +32,7 @@ public class PushMojo extends VaultMojo {
    *
    * @throws MojoExecutionException if an exception is thrown based upon the project configuration
    */
-  public void execute() throws MojoExecutionException {
+  public void executeVaultOperation() throws MojoExecutionException {
     if (this.skipExecution) {
       return;
     }

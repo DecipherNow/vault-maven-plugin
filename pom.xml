@@ -76,10 +76,10 @@
         <version.bouncycastle.plugin>1.0.0</version.bouncycastle.plugin>
         <version.checkstyle.plugin>2.17</version.checkstyle.plugin>
         <version.compiler.plugin>3.6.1</version.compiler.plugin>
-        <version.docker.plugin>0.20.1</version.docker.plugin>
+        <version.docker.plugin>0.38.0</version.docker.plugin>
         <version.failsafe.plugin>${version.surefire.plugin}</version.failsafe.plugin>
         <version.freemarker>2.3.23</version.freemarker>
-        <version.guava>19.0</version.guava>
+        <version.guava>27.0-jre</version.guava>
         <version.jacoco>0.7.9</version.jacoco>
         <version.jacoco.plugin>${version.jacoco}</version.jacoco.plugin>
         <version.java.source>1.8</version.java.source>
@@ -94,9 +94,9 @@
         <version.plugin.testing>3.3.0</version.plugin.testing>
         <version.plugin.plugin>3.5</version.plugin.plugin>
         <version.source.plugin>3.0.1</version.source.plugin>
-        <version.surefire.plugin>2.19.1</version.surefire.plugin>
+        <version.surefire.plugin>2.22.0</version.surefire.plugin>
         <version.vault>0.6.5</version.vault>
-        <version.vault.driver>2.0.0</version.vault.driver>
+        <version.vault.driver>5.1.0</version.vault.driver>
     </properties>
 
     <dependencies>
@@ -115,7 +115,6 @@
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>${version.guava}</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
@@ -198,7 +197,7 @@
                                 <env>
                                     <VAULT_DEV_ROOT_TOKEN_ID>${docker.vault.token}</VAULT_DEV_ROOT_TOKEN_ID>
                                 </env>
-                                <hostname>{docker.vault.host}</hostname>
+                                <hostname>${docker.vault.host}</hostname>
                                 <network>
                                     <mode>custom</mode>
                                     <name>${docker.network}</name>
@@ -207,6 +206,7 @@
                             </run>
                         </image>
                         <image>
+                            <alias>${docker.nginx.host}</alias>
                             <name>nginx:${version.nginx}-alpine</name>
                             <run>
                                 <hostname>${docker.nginx.host}</hostname>

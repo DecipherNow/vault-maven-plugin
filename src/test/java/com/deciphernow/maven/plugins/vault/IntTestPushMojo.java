@@ -17,6 +17,7 @@
 package com.deciphernow.maven.plugins.vault;
 
     import com.bettercloud.vault.VaultException;
+    import com.deciphernow.maven.plugins.vault.config.Authentication;
     import com.deciphernow.maven.plugins.vault.config.Mapping;
     import com.deciphernow.maven.plugins.vault.config.Path;
     import com.deciphernow.maven.plugins.vault.config.Server;
@@ -30,6 +31,7 @@ package com.deciphernow.maven.plugins.vault;
     import java.net.URISyntaxException;
     import java.net.URL;
     import java.util.List;
+    import java.util.Map;
     import java.util.Properties;
     import java.util.UUID;
     import java.util.function.Consumer;
@@ -46,6 +48,7 @@ public class IntTestPushMojo {
   private static final String VAULT_PORT = System.getProperty("vault.port", "443");
   private static final String VAULT_SERVER = String.format("https://%s:%s", VAULT_HOST, VAULT_PORT);
   private static final String VAULT_TOKEN = System.getProperty("vault.token");
+  private static final Map<String,String> VAULT_GITHUB_AUTH = Map.of(Authentication.GITHUB_TOKEN_TAG, "token");
 
   private static Mapping randomMapping() {
     return new Mapping(UUID.randomUUID().toString(), UUID.randomUUID().toString());
@@ -72,7 +75,7 @@ public class IntTestPushMojo {
       List<Path> paths = randomPaths(10, 10);
       File certificate = new File(VAULT_CERTIFICATE.toURI());
       System.out.println(String.format("%s/%s", VAULT_SERVER, VAULT_TOKEN));
-      this.servers = ImmutableList.of(new Server(VAULT_SERVER, VAULT_TOKEN, true, certificate, paths, false));
+      this.servers = ImmutableList.of(new Server(VAULT_SERVER, VAULT_TOKEN, true, certificate, VAULT_GITHUB_AUTH, "", paths, false));
       this.properties = new Properties();
       this.servers.stream().forEach(server -> {
         server.getPaths().stream().forEach(path -> {

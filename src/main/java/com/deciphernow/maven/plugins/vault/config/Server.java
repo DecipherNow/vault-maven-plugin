@@ -19,6 +19,7 @@ package com.deciphernow.maven.plugins.vault.config;
 import java.io.File;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -34,6 +35,10 @@ public class Server implements Serializable {
 
   private String token;
 
+  private Map<String,String> authentication;
+
+  private String namespace;
+
   private List<Path> paths;
 
   private boolean skipExecution;
@@ -45,15 +50,20 @@ public class Server implements Serializable {
 
   /**
    * Initializes a new instance of the {@link Server} class.
-   *
    * @param url the URL of the server
    * @param token the token for the server
    * @param sslVerify {@code true} if the SSL connection should be verified; otherwise, {@code false}
    * @param sslCertificate the SSL certificate file or null
+   * @param authentication the authentication method and credentials
+   * @param namespace the namespace for the vault
    * @param paths the paths for the server
    */
-  public Server(String url, String token, boolean sslVerify, File sslCertificate, List<Path> paths,
+  public Server(String url, String token, boolean sslVerify, File sslCertificate, Map<String, String> authentication,
+                String namespace,
+                List<Path> paths,
                 boolean skipExecution) {
+    this.authentication = authentication;
+    this.namespace = namespace;
     this.paths = paths;
     this.sslCertificate = sslCertificate;
     this.sslVerify = sslVerify;
@@ -99,6 +109,24 @@ public class Server implements Serializable {
   }
 
   /**
+   * Gets the authentication map containing the authentication method and credentials used to login into this server.
+   *
+   * @return the authentication
+   */
+  public Map<String,String> getAuthentication() {
+    return this.authentication;
+  }
+
+  /**
+   * Gets the namespace of this server.
+   *
+   * @return the namespace
+   */
+  public String getNamespace() {
+    return namespace;
+  }
+
+  /**
    * Gets the URL of this server.
    *
    * @return the URL
@@ -114,6 +142,15 @@ public class Server implements Serializable {
    */
   public boolean isSkipExecution() {
     return skipExecution;
+  }
+
+  /**
+   * Sets the token of this server.
+   *
+   * @param token String
+   */
+  public void setToken(String token) {
+    this.token = token;
   }
 
   /**
@@ -134,6 +171,8 @@ public class Server implements Serializable {
     if (object instanceof Server) {
       Server that = (Server) object;
       return Objects.equals(this.paths, that.paths)
+          && Objects.equals(this.namespace, that.namespace)
+          && Objects.equals(this.authentication, that.authentication)
           && Objects.equals(this.sslVerify, that.sslVerify)
           && Objects.equals(this.skipExecution, that.skipExecution)
           && Objects.equals(this.sslCertificate, that.sslCertificate)

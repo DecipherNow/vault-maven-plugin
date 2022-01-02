@@ -16,12 +16,23 @@
 
 package com.deciphernow.maven.plugins.vault;
 
+import static com.deciphernow.maven.plugins.vault.config.Authentication.authenticationMethod;
+import static com.deciphernow.maven.plugins.vault.config.Authentication.methods;
+
+import com.google.common.base.Strings;
+
+import com.bettercloud.vault.VaultException;
 import com.deciphernow.maven.plugins.vault.config.Server;
 import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
 import java.util.List;
+import java.util.Objects;
+
+
+
 
 /**
  * Provides an abstract class for mojos that work with Vault.
@@ -36,4 +47,36 @@ abstract class VaultMojo extends AbstractMojo {
 
   @Parameter(property = "skipExecution", defaultValue = "false")
   protected boolean skipExecution;
+
+  @Override
+  public void execute() throws MojoExecutionException {
+    try {
+      authenticateIfNecessary();
+      executeVaultOperation();
+    } catch (VaultException e) {
+      getLog().error(e);
+    }
+  }
+
+  private void authenticateIfNecessary() throws VaultException {
+    for (Server s : servers) {
+      if (!Strings.isNullOrEmpty(s.getToken())) {
+        return;
+      } else if (!Objects.isNull(s.getAuthentication())) {
+        authenticationMethod(s).login();
+      } else {
+        getLog().error("Either a Token of Authentication method must be provided !!\n"
+                + "authentication methods are: " + methods + "\n"
+                + "<token>"
+                + "YOUR_VAULT_TOKEN"
+                + "</token>\n\n"
+                + "OR\n\n"
+                + "<authentication>\n"
+                + "\t<AUTH_METHOD>__AUTH_CREDENTIALS__</AUTH_METHOD>\n"
+                + "</authentication>\n");
+      }
+    }
+  }
+
+  abstract void executeVaultOperation() throws MojoExecutionException;
 }

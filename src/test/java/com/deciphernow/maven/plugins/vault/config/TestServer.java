@@ -21,6 +21,7 @@ import org.junit.Test;
 
 import java.io.*;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -40,7 +41,8 @@ public class TestServer {
   private static final boolean SKIP_EXECUTION = RANDOM.nextBoolean();
   private static final String TOKEN = UUID.randomUUID().toString();
   private static final String URL = UUID.randomUUID().toString();
-  private static final Server INSTANCE = new Server(URL, TOKEN, SSL_VERIFY, SSL_CERTIFICATE, PATHS, SKIP_EXECUTION);
+  private static final Map<String,String> VAULT_GITHUB_AUTH = Map.of(Authentication.GITHUB_TOKEN_TAG, "token");
+  private static final Server INSTANCE = new Server(URL, TOKEN, SSL_VERIFY, SSL_CERTIFICATE, VAULT_GITHUB_AUTH, "", PATHS, SKIP_EXECUTION);
 
   private static Path randomPath(int mappingCount) {
     return new Path(UUID.randomUUID().toString(), randomMappings(mappingCount));
@@ -112,12 +114,12 @@ public class TestServer {
   @Test
   public void testEquality() {
     EqualsTester tester = new EqualsTester();
-    tester.addEqualityGroup(INSTANCE, INSTANCE, new Server(URL, TOKEN, SSL_VERIFY, SSL_CERTIFICATE, PATHS, SKIP_EXECUTION));
-    tester.addEqualityGroup(new Server(UUID.randomUUID().toString(), TOKEN, SSL_VERIFY, SSL_CERTIFICATE, PATHS, SKIP_EXECUTION));
-    tester.addEqualityGroup(new Server(URL, UUID.randomUUID().toString(), SSL_VERIFY, SSL_CERTIFICATE, PATHS, SKIP_EXECUTION));
-    tester.addEqualityGroup(new Server(URL, TOKEN, !SSL_VERIFY, SSL_CERTIFICATE, PATHS, SKIP_EXECUTION));
-    tester.addEqualityGroup(new Server(URL, TOKEN, SSL_VERIFY, new File("/dev/random"), PATHS, SKIP_EXECUTION));
-    tester.addEqualityGroup(new Server(URL, TOKEN, SSL_VERIFY, SSL_CERTIFICATE, randomPaths(10, 10), SKIP_EXECUTION));
+    tester.addEqualityGroup(INSTANCE, INSTANCE, new Server(URL, TOKEN, SSL_VERIFY, SSL_CERTIFICATE, VAULT_GITHUB_AUTH, "", PATHS, SKIP_EXECUTION));
+    tester.addEqualityGroup(new Server(UUID.randomUUID().toString(), TOKEN, SSL_VERIFY, SSL_CERTIFICATE, VAULT_GITHUB_AUTH, "", PATHS, SKIP_EXECUTION));
+    tester.addEqualityGroup(new Server(URL, UUID.randomUUID().toString(), SSL_VERIFY, SSL_CERTIFICATE, VAULT_GITHUB_AUTH, "", PATHS, SKIP_EXECUTION));
+    tester.addEqualityGroup(new Server(URL, TOKEN, !SSL_VERIFY, SSL_CERTIFICATE, VAULT_GITHUB_AUTH, "", PATHS, SKIP_EXECUTION));
+    tester.addEqualityGroup(new Server(URL, TOKEN, SSL_VERIFY, new File("/dev/random"), VAULT_GITHUB_AUTH, "", PATHS, SKIP_EXECUTION));
+    tester.addEqualityGroup(new Server(URL, TOKEN, SSL_VERIFY, SSL_CERTIFICATE, VAULT_GITHUB_AUTH, "", randomPaths(10, 10), SKIP_EXECUTION));
     tester.testEquals();
   }
 

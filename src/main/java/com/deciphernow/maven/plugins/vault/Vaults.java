@@ -71,7 +71,7 @@ public final class Vaults {
         continue;
       }
       Vault vault = vault(server.getUrl(), server.getToken(), server.getNamespace(),
-              server.getSslVerify(), server.getSslCertificate());
+              server.getSslVerify(), server.getSslCertificate(), server.getEngineVersion());
       for (Path path : server.getPaths()) {
         Map<String, String> secrets = get(vault, path.getName());
         for (Mapping mapping : path.getMappings()) {
@@ -98,7 +98,7 @@ public final class Vaults {
         continue;
       }
       Vault vault = vault(server.getUrl(), server.getToken(), server.getNamespace(),
-              server.getSslVerify(), server.getSslCertificate());
+              server.getSslVerify(), server.getSslCertificate(), server.getEngineVersion());
       for (Path path : server.getPaths()) {
         Map<String, String> secrets = exists(vault, path.getName()) ? get(vault, path.getName()) : new HashMap<>();
         for (Mapping mapping : path.getMappings()) {
@@ -117,10 +117,9 @@ public final class Vaults {
    * Authenticate to one or more Vault servers and paths from a {@link Properties} instance.
    *
    * @param servers the servers
-   * @param properties the properties
-   * @throws VaultException if an exception is throw pushing the secrets
+   * @throws VaultException if an exception is throw authenticating
    */
-  public static void authenticateIfNecessary(List<Server> servers, Properties properties) throws VaultException {
+  public static void authenticateIfNecessary(List<Server> servers) throws VaultException {
     for (Server s : servers) {
       if (!Strings.isNullOrEmpty(s.getToken())) {
         return;
@@ -193,10 +192,11 @@ public final class Vaults {
                              String token,
                              String namespace,
                              boolean sslVerify,
-                             File sslCertificate) throws VaultException {
+                             File sslCertificate,
+                             Integer engineVersion) throws VaultException {
 
 
-    return new Vault(vaultConfig(server,token,namespace,sslVerify,sslCertificate));
+    return new Vault(vaultConfig(server,token,namespace,sslVerify,sslCertificate,engineVersion));
   }
 
 
@@ -213,7 +213,8 @@ public final class Vaults {
                                         String token,
                                         String namespace,
                                         boolean sslVerify,
-                                        File sslCertificate) throws VaultException {
+                                        File sslCertificate,
+                                        Integer engineVersion) throws VaultException {
     SslConfig sslConfig = new SslConfig().verify(sslVerify);
     if (sslCertificate != null) {
       sslConfig.pemFile(sslCertificate);
@@ -223,7 +224,8 @@ public final class Vaults {
             .openTimeout(OPEN_TIMEOUT)
             .readTimeout(READ_TIMEOUT)
             .sslConfig(sslConfig)
-            .token(token);
+            .token(token)
+            .engineVersion(engineVersion);
     if (!Strings.isNullOrEmpty(namespace)) {
       vaultConfig.nameSpace(namespace);
     }

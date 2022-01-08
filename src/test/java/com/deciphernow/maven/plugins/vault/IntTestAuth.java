@@ -56,7 +56,7 @@ public class IntTestAuth {
         private Fixture() throws URISyntaxException {
             List<Path> paths = randomPaths(10, 10);
             File certificate = new File(VAULT_CERTIFICATE.toURI());
-            this.servers = ImmutableList.of(new Server(VAULT_SERVER, null, true, certificate, VAULT_GITHUB_AUTH, "", paths, false));
+            this.servers = ImmutableList.of(new Server(VAULT_SERVER, null, true, certificate, VAULT_GITHUB_AUTH, "", paths, false, 1));
             this.properties = new Properties();
             this.servers.stream().forEach(server -> {
                 server.getPaths().stream().forEach(path -> {
@@ -133,7 +133,7 @@ public class IntTestAuth {
             mojo.servers = fixture.servers;
             mojo.skipExecution = false;
             try {
-                Vaults.authenticateIfNecessary(fixture.servers, fixture.properties);
+                Vaults.authenticateIfNecessary(fixture.servers);
                 Vaults.push(fixture.servers, fixture.properties);
                 mojo.execute();
                 assertTrue(Maps.difference(fixture.properties, mojo.project.getProperties()).areEqual());

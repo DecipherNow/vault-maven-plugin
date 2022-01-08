@@ -77,7 +77,7 @@ public class IntTestVaults {
       File certificate = new File(VAULT_CERTIFICATE.toURI());
       boolean skipExecution = false;
       System.out.println(String.format("%s/%s", VAULT_SERVER, VAULT_TOKEN));
-      this.servers = ImmutableList.of(new Server(VAULT_SERVER, VAULT_TOKEN, true, certificate, VAULT_GITHUB_AUTH, "", paths, skipExecution));
+      this.servers = ImmutableList.of(new Server(VAULT_SERVER, VAULT_TOKEN, true, certificate, VAULT_GITHUB_AUTH, "", paths, skipExecution, 1));
       this.properties = new Properties();
       this.servers.stream().forEach(server -> {
         server.getPaths().stream().forEach(path -> {

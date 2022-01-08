@@ -17,7 +17,7 @@ public abstract class AuthenticationMethod {
   public AuthenticationMethod(Server server) throws VaultException {
     this.server = server;
     this.vaultConfig = Vaults.vaultConfig(server.getUrl(), server.getToken(), server.getNamespace(),
-            server.getSslVerify(), server.getSslCertificate());
+            server.getSslVerify(), server.getSslCertificate(), server.getEngineVersion());
   }
 
   public abstract void login() throws VaultException;

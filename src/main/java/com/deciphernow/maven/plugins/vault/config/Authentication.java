@@ -9,9 +9,7 @@ import java.util.List;
 public class Authentication {
 
   public static final String GITHUB_TOKEN_TAG = "githubToken";
-  public static final String ROLE_ID_TAG = "roleId";
-  public static final String SECRET_ID_TAG = "secreteId";
-  public static final List<String> methods = List.of(ROLE_ID_TAG, SECRET_ID_TAG, GITHUB_TOKEN_TAG);
+  public static final List<String> methods = List.of(GITHUB_TOKEN_TAG);
 
   /**
    * Factory method that helps creating the authentication config.

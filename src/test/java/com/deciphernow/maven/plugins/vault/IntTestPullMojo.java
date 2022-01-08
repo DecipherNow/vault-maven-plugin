@@ -44,7 +44,7 @@ import static org.junit.Assert.fail;
 public class IntTestPullMojo {
 
   private static final URL VAULT_CERTIFICATE = IntTestVaults.class.getResource("certificate.pem");
-  private static final String VAULT_HOST = "localhost"; //System.getProperty("vault.host", "localhost");
+  private static final String VAULT_HOST = System.getProperty("vault.host", "localhost");
   private static final String VAULT_PORT = System.getProperty("vault.port", "443");
   private static final String VAULT_SERVER = String.format("https://%s:%s", VAULT_HOST, VAULT_PORT);
   private static final String VAULT_TOKEN = System.getProperty("vault.token");

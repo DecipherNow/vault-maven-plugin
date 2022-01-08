@@ -51,31 +51,11 @@ abstract class VaultMojo extends AbstractMojo {
   @Override
   public void execute() throws MojoExecutionException {
     try {
-      authenticateIfNecessary();
-      executeVaultOperation();
+      Vaults.authenticateIfNecessary(servers,project.getProperties());
     } catch (VaultException e) {
-      getLog().error(e);
+      throw new MojoExecutionException("Exception thrown authenticating.", e);
     }
-  }
-
-  private void authenticateIfNecessary() throws VaultException {
-    for (Server s : servers) {
-      if (!Strings.isNullOrEmpty(s.getToken())) {
-        return;
-      } else if (!Objects.isNull(s.getAuthentication())) {
-        authenticationMethod(s).login();
-      } else {
-        getLog().error("Either a Token of Authentication method must be provided !!\n"
-                + "authentication methods are: " + methods + "\n"
-                + "<token>"
-                + "YOUR_VAULT_TOKEN"
-                + "</token>\n\n"
-                + "OR\n\n"
-                + "<authentication>\n"
-                + "\t<AUTH_METHOD>__AUTH_CREDENTIALS__</AUTH_METHOD>\n"
-                + "</authentication>\n");
-      }
-    }
+    executeVaultOperation();
   }
 
   abstract void executeVaultOperation() throws MojoExecutionException;

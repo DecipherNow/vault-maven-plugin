@@ -65,7 +65,9 @@
         <docker.network>vault-maven-plugin-${maven.build.timestamp}</docker.network>
         <docker.nginx.host>nginx.docker</docker.nginx.host>
         <docker.vault.host>vault.docker</docker.vault.host>
+        <docker.nginx.port>443</docker.nginx.port>
         <docker.vault.token>6edb70bd-3398-1f42-d67e-b9db377223cd</docker.vault.token>
+        <docker.vault.github.token>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</docker.vault.github.token>
         <jacoco.integration.file>${project.build.directory}/jacoco-integration.exec</jacoco.integration.file>
         <jacoco.merged.file>${project.build.directory}/jacoco.exec</jacoco.merged.file>
         <jacoco.unit.file>${project.build.directory}/jacoco-unit.exec</jacoco.unit.file>
@@ -75,12 +77,12 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <version.bouncycastle.plugin>1.0.0</version.bouncycastle.plugin>
         <version.checkstyle.plugin>2.17</version.checkstyle.plugin>
-        <version.compiler.plugin>3.6.1</version.compiler.plugin>
+        <version.compiler.plugin>3.8.1</version.compiler.plugin>
         <version.docker.plugin>0.38.0</version.docker.plugin>
         <version.failsafe.plugin>${version.surefire.plugin}</version.failsafe.plugin>
         <version.freemarker>2.3.23</version.freemarker>
         <version.guava>27.0-jre</version.guava>
-        <version.jacoco>0.7.9</version.jacoco>
+        <version.jacoco>0.8.7</version.jacoco>
         <version.jacoco.plugin>${version.jacoco}</version.jacoco.plugin>
         <version.java.source>1.8</version.java.source>
         <version.java.target>1.8</version.java.target>
@@ -196,13 +198,31 @@
                                 </capAdd>
                                 <env>
                                     <VAULT_DEV_ROOT_TOKEN_ID>${docker.vault.token}</VAULT_DEV_ROOT_TOKEN_ID>
+                                    <VAULT_ADDR>http://127.0.0.1:8200</VAULT_ADDR>
                                 </env>
                                 <hostname>${docker.vault.host}</hostname>
+                                <volumes>
+                                    <bind>
+                                        <volume>${project.basedir}/docker/vault:/home/vault</volume>
+                                    </bind>
+                                </volumes>
                                 <network>
                                     <mode>custom</mode>
                                     <name>${docker.network}</name>
                                     <alias>${docker.vault.host}</alias>
                                 </network>
+                                <wait>
+                                    <!--<time>10000</time>
+                                    <http>
+                                        <url>http://127.0.0.1:8200/v1/sys/health</url>
+                                        <method>GET</method>
+                                        <status>200..399</status>
+                                    </http>-->
+                                    <time>10000</time>
+                                    <exec>
+                                        <postStart>sh /home/vault/enable-github-auth.sh</postStart>
+                                    </exec>
+                                </wait>
                             </run>
                         </image>
                         <image>
@@ -270,8 +290,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${version.compiler.plugin}</version>
                 <configuration>
-                    <source>${version.java.source}</source>
-                    <target>${version.java.target}</target>
+                    <source>9</source>
+                    <target>9</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -281,14 +301,16 @@
                 <configuration>
                     <redirectTestOutputToFile>true</redirectTestOutputToFile>
                     <runOrder>${maven.test.runOrder}</runOrder>
+                    <argLine>-Xmx1024m -XX:MaxPermSize=256m</argLine>
                     <includes>
                         <include>**/IntTest*.class</include>
                         <include>**/IntSpec*.class</include>
                     </includes>
                     <systemPropertyVariables>
-                        <vault.host>${docker.nginx.host}</vault.host>
+                        <vault.host>localhost</vault.host>
                         <vault.port>${docker.nginx.port}</vault.port>
                         <vault.token>${docker.vault.token}</vault.token>
+                        <vault.github.token>${docker.vault.github.token}</vault.github.token>
                         <sun.net.spi.nameservice.provider.1>dns,moby</sun.net.spi.nameservice.provider.1>
                         <sun.net.spi.nameservice.provider.2>default</sun.net.spi.nameservice.provider.2>
                     </systemPropertyVariables>
@@ -322,6 +344,7 @@
                 <configuration>
                     <redirectTestOutputToFile>true</redirectTestOutputToFile>
                     <runOrder>${maven.test.runOrder}</runOrder>
+                    <argLine>-Xmx1024m -XX:MaxPermSize=256m</argLine>
                     <includes>
                         <include>**/Test*.class</include>
                         <include>**/Spec*.class</include>
@@ -341,7 +364,7 @@
                         </goals>
                         <configuration>
                             <destFile>${jacoco.unit.file}</destFile>
-                            <sessionId>${artifactId}-unit-${maven.build.timestamp}</sessionId>
+                            <sessionId>${project.artifactId}-unit-${maven.build.timestamp}</sessionId>
                         </configuration>
                     </execution>
                     <execution>
@@ -352,7 +375,7 @@
                         </goals>
                         <configuration>
                             <destFile>${jacoco.integration.file}</destFile>
-                            <sessionId>${artifactId}-integration-${maven.build.timestamp}</sessionId>
+                            <sessionId>${project.artifactId}-integration-${maven.build.timestamp}</sessionId>
                         </configuration>
                     </execution>
                     <execution>

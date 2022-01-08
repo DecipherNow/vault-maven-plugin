@@ -16,6 +16,9 @@
 
 package com.deciphernow.maven.plugins.vault;
 
+import static com.deciphernow.maven.plugins.vault.config.Authentication.authenticationMethod;
+import static com.deciphernow.maven.plugins.vault.config.Authentication.methods;
+
 import com.google.common.base.Strings;
 
 import com.bettercloud.vault.SslConfig;
@@ -31,7 +34,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Properties;
+
 
 /**
  * Provides static methods for working with Vault.
@@ -104,6 +109,34 @@ public final class Vaults {
           secrets.put(mapping.getKey(), properties.getProperty(mapping.getProperty()));
         }
         set(vault, path.getName(), secrets);
+      }
+    }
+  }
+
+  /**
+   * Authenticate to one or more Vault servers and paths from a {@link Properties} instance.
+   *
+   * @param servers the servers
+   * @param properties the properties
+   * @throws VaultException if an exception is throw pushing the secrets
+   */
+  public static void authenticateIfNecessary(List<Server> servers, Properties properties) throws VaultException {
+    for (Server s : servers) {
+      if (!Strings.isNullOrEmpty(s.getToken())) {
+        return;
+      } else if (!Objects.isNull(s.getAuthentication())) {
+        authenticationMethod(s).login();
+      } else {
+        throw new VaultException("Either a Token of Authentication method must be provided !!\n"
+                + "Put in your server configuration in the pom.xml:\n"
+                + "<token>"
+                + "YOUR_VAULT_TOKEN"
+                + "</token>\n"
+                + "or\n"
+                + "<authentication>\n"
+                + "  <AUTH_METHOD>__AUTH_CREDENTIALS__</AUTH_METHOD>\n"
+                + "</authentication>\n"
+                + "available authentication methods are: " + methods + "\n");
       }
     }
   }

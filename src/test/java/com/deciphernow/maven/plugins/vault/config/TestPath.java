@@ -91,9 +91,9 @@ public class TestPath {
       try (ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
            ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream)) {
 
-        Path deserailized = (Path) objectInputStream.readObject();
-        assertEquals(NAME, deserailized.getName());
-        assertEquals(MAPPINGS, deserailized.getMappings());
+        Path deserialized = (Path) objectInputStream.readObject();
+        assertEquals(NAME, deserialized.getName());
+        assertEquals(MAPPINGS, deserialized.getMappings());
       }
     }
   }

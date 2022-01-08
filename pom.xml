@@ -65,7 +65,6 @@
         <docker.network>vault-maven-plugin-${maven.build.timestamp}</docker.network>
         <docker.nginx.host>nginx.docker</docker.nginx.host>
         <docker.vault.host>vault.docker</docker.vault.host>
-        <docker.nginx.port>443</docker.nginx.port>
         <docker.vault.token>6edb70bd-3398-1f42-d67e-b9db377223cd</docker.vault.token>
         <docker.vault.github.token>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</docker.vault.github.token>
         <jacoco.integration.file>${project.build.directory}/jacoco-integration.exec</jacoco.integration.file>

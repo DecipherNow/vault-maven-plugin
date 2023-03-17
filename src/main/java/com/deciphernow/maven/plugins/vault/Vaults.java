@@ -16,8 +16,7 @@
 
 package com.deciphernow.maven.plugins.vault;
 
-import static com.deciphernow.maven.plugins.vault.config.Authentication.authenticationMethod;
-import static com.deciphernow.maven.plugins.vault.config.Authentication.methods;
+import static com.deciphernow.maven.plugins.vault.config.AuthenticationMethodFactory.methods;
 
 import com.google.common.base.Strings;
 
@@ -25,6 +24,7 @@ import com.bettercloud.vault.SslConfig;
 import com.bettercloud.vault.Vault;
 import com.bettercloud.vault.VaultConfig;
 import com.bettercloud.vault.VaultException;
+import com.deciphernow.maven.plugins.vault.config.AuthenticationMethodProvider;
 import com.deciphernow.maven.plugins.vault.config.Mapping;
 import com.deciphernow.maven.plugins.vault.config.Path;
 import com.deciphernow.maven.plugins.vault.config.Server;
@@ -119,12 +119,13 @@ public final class Vaults {
    * @param servers the servers
    * @throws VaultException if an exception is throw authenticating
    */
-  public static void authenticateIfNecessary(List<Server> servers) throws VaultException {
+  public static void authenticateIfNecessary(List<Server> servers, AuthenticationMethodProvider factory)
+          throws VaultException {
     for (Server s : servers) {
       if (!Strings.isNullOrEmpty(s.getToken())) {
         return;
       } else if (!Objects.isNull(s.getAuthentication())) {
-        authenticationMethod(s).login();
+        factory.fromServer(s).login();
       } else {
         throw new VaultException("Either a Token of Authentication method must be provided !!\n"
                 + "Put in your server configuration in the pom.xml:\n"

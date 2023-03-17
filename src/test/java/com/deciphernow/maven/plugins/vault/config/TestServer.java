@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Provides unit tests for the {@link Server} class.
@@ -40,9 +41,11 @@ public class TestServer {
   private static final boolean SSL_VERIFY = RANDOM.nextBoolean();
   private static final boolean SKIP_EXECUTION = RANDOM.nextBoolean();
   private static final String TOKEN = UUID.randomUUID().toString();
+
+  private static final String NAMESPACE = "";
   private static final String URL = UUID.randomUUID().toString();
-  private static final Map<String,String> VAULT_GITHUB_AUTH = Map.of(Authentication.GITHUB_TOKEN_TAG, "token");
-  private static final Server INSTANCE = new Server(URL, TOKEN, SSL_VERIFY, SSL_CERTIFICATE, VAULT_GITHUB_AUTH, "", PATHS, SKIP_EXECUTION, 1);
+  private static final Map<String,String> VAULT_GITHUB_AUTH = Map.of(AuthenticationMethodFactory.GITHUB_TOKEN_TAG, "token");
+  private static final Server INSTANCE = new Server(URL, TOKEN, SSL_VERIFY, SSL_CERTIFICATE, VAULT_GITHUB_AUTH, NAMESPACE, PATHS, SKIP_EXECUTION, 1);
 
   private static Path randomPath(int mappingCount) {
     return new Path(UUID.randomUUID().toString(), randomMappings(mappingCount));
@@ -92,12 +95,27 @@ public class TestServer {
     assertEquals(SKIP_EXECUTION, INSTANCE.isSkipExecution());
   }
 
+  @Test
+  public void testGetEngineVersion() {
+    assertTrue(INSTANCE.getEngineVersion().equals(1));
+  }
+
   /**
    * Tests the {@link Server#getToken()} property.
    */
   @Test
   public void testGetToken() {
     assertEquals(TOKEN, INSTANCE.getToken());
+  }
+
+  @Test
+  public void testGetAuthentication() {
+    assertEquals(VAULT_GITHUB_AUTH, INSTANCE.getAuthentication());
+  }
+
+  @Test
+  public void testGetNamespace() {
+    assertEquals(NAMESPACE, INSTANCE.getNamespace());
   }
 
   /**
@@ -139,6 +157,9 @@ public class TestServer {
 
         Server deserialized = (Server) objectInputStream.readObject();
         assertEquals(PATHS, deserialized.getPaths());
+        assertEquals(NAMESPACE, deserialized.getNamespace());
+        assertEquals(VAULT_GITHUB_AUTH, deserialized.getAuthentication());
+        assertTrue(deserialized.getEngineVersion().equals(1));
         assertEquals(SSL_CERTIFICATE, deserialized.getSslCertificate());
         assertEquals(SSL_VERIFY, deserialized.getSslVerify());
         assertEquals(TOKEN, deserialized.getToken());

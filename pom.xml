@@ -84,6 +84,7 @@
         <version.surefire.plugin>2.22.0</version.surefire.plugin>
         <version.vault>1.9.2</version.vault>
         <version.vault.driver>5.1.0</version.vault.driver>
+        <mockito-core.version>5.2.0</mockito-core.version>
     </properties>
 
     <dependencies>
@@ -113,6 +114,12 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>${version.junit}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>${mockito-core.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

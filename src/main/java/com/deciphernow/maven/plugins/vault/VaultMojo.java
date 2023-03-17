@@ -16,12 +16,9 @@
 
 package com.deciphernow.maven.plugins.vault;
 
-import static com.deciphernow.maven.plugins.vault.config.Authentication.authenticationMethod;
-import static com.deciphernow.maven.plugins.vault.config.Authentication.methods;
-
-import com.google.common.base.Strings;
-
 import com.bettercloud.vault.VaultException;
+import com.deciphernow.maven.plugins.vault.config.AuthenticationMethodFactory;
+import com.deciphernow.maven.plugins.vault.config.AuthenticationMethodProvider;
 import com.deciphernow.maven.plugins.vault.config.Server;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -29,9 +26,6 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
 import java.util.List;
-import java.util.Objects;
-
-
 
 
 /**
@@ -48,6 +42,8 @@ abstract class VaultMojo extends AbstractMojo {
   @Parameter(property = "skipExecution", defaultValue = "false")
   protected boolean skipExecution;
 
+  private final AuthenticationMethodProvider authenticationMethodProvider = new AuthenticationMethodFactory();
+
   @Override
   public void execute() throws MojoExecutionException {
     executeVaultAuthentication();
@@ -56,7 +52,7 @@ abstract class VaultMojo extends AbstractMojo {
 
   private void executeVaultAuthentication() throws MojoExecutionException {
     try {
-      Vaults.authenticateIfNecessary(servers);
+      Vaults.authenticateIfNecessary(servers, authenticationMethodProvider);
     } catch (VaultException e) {
       throw new MojoExecutionException("Exception thrown authenticating.", e);
     }

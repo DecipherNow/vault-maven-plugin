@@ -17,7 +17,7 @@
 package com.deciphernow.maven.plugins.vault;
 
 import com.bettercloud.vault.VaultException;
-import com.deciphernow.maven.plugins.vault.config.Authentication;
+import com.deciphernow.maven.plugins.vault.config.AuthenticationMethodFactory;
 import com.deciphernow.maven.plugins.vault.config.Mapping;
 import com.deciphernow.maven.plugins.vault.config.Path;
 import com.deciphernow.maven.plugins.vault.config.Server;
@@ -48,7 +48,7 @@ public class IntTestPullMojo {
   private static final String VAULT_PORT = System.getProperty("vault.port", "443");
   private static final String VAULT_SERVER = String.format("https://%s:%s", VAULT_HOST, VAULT_PORT);
   private static final String VAULT_TOKEN = System.getProperty("vault.token");
-  private static final Map<String,String> VAULT_GITHUB_AUTH = Map.of(Authentication.GITHUB_TOKEN_TAG, "token");
+  private static final Map<String,String> VAULT_GITHUB_AUTH = Map.of(AuthenticationMethodFactory.GITHUB_TOKEN_TAG, "token");
 
   private static Mapping randomMapping() {
     return new Mapping(UUID.randomUUID().toString(), UUID.randomUUID().toString());

@@ -17,10 +17,8 @@
 package com.deciphernow.maven.plugins.vault;
 
 import com.bettercloud.vault.VaultException;
-import com.deciphernow.maven.plugins.vault.config.Authentication;
-import com.deciphernow.maven.plugins.vault.config.Mapping;
-import com.deciphernow.maven.plugins.vault.config.Path;
-import com.deciphernow.maven.plugins.vault.config.Server;
+import com.bettercloud.vault.api.Auth;
+import com.deciphernow.maven.plugins.vault.config.*;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 import org.junit.Test;
@@ -49,7 +47,7 @@ public class IntTestVaults {
   private static final String VAULT_PORT = System.getProperty("vault.port", "443");
   private static final String VAULT_SERVER = String.format("https://%s:%s", VAULT_HOST, VAULT_PORT);
   private static final String VAULT_TOKEN = System.getProperty("vault.token");
-  private static final Map<String,String> VAULT_GITHUB_AUTH = Map.of(Authentication.GITHUB_TOKEN_TAG, "token");
+  private static final Map<String,String> VAULT_GITHUB_AUTH = Map.of(AuthenticationMethodFactory.GITHUB_TOKEN_TAG, "token");
 
   private static Mapping randomMapping() {
     return new Mapping(UUID.randomUUID().toString(), UUID.randomUUID().toString());
@@ -60,7 +58,7 @@ public class IntTestVaults {
   }
 
   private static Path randomPath(int mappingCount) {
-    return new Path(String.format("secret/%s", UUID.randomUUID().toString()), randomMappings(mappingCount));
+    return new Path(String.format("secret/%s", UUID.randomUUID()), randomMappings(mappingCount));
   }
 
   private static List<Path> randomPaths(int pathCount, int mappingCount) {
@@ -69,6 +67,7 @@ public class IntTestVaults {
 
   private static class Fixture {
 
+    private final AuthenticationMethodProvider authenticationMethodProvider;
     private final List<Server> servers;
     private final Properties properties;
 
@@ -79,6 +78,7 @@ public class IntTestVaults {
       System.out.println(String.format("%s/%s", VAULT_SERVER, VAULT_TOKEN));
       this.servers = ImmutableList.of(new Server(VAULT_SERVER, VAULT_TOKEN, true, certificate, VAULT_GITHUB_AUTH, "", paths, skipExecution, 2));
       this.properties = new Properties();
+      this.authenticationMethodProvider = new AuthenticationMethodFactory();
       this.servers.stream().forEach(server -> {
         server.getPaths().stream().forEach(path -> {
           path.getMappings().stream().forEach(mapping -> {
@@ -111,6 +111,22 @@ public class IntTestVaults {
         } catch (VaultException exception) {
           fail(String.format("Unexpected exception while pulling to Vault: %s", exception.getMessage()));
         }
+      } catch (VaultException exception) {
+        fail(String.format("Unexpected exception while pushing to Vault: %s", exception.getMessage()));
+      }
+    });
+  }
+
+  /**
+   * Tests the {@link Vaults#authenticateIfNecessary(List<Server>, AuthenticationMethodProvider)} method.
+   *
+   * @throws URISyntaxException if an exception is raised parsing the certificate
+   */
+  @Test
+  public void testAuthentication() throws URISyntaxException {
+    Fixture.with(fixture -> {
+      try {
+        Vaults.authenticateIfNecessary(fixture.servers, fixture.authenticationMethodProvider);
       } catch (VaultException exception) {
         fail(String.format("Unexpected exception while pushing to Vault: %s", exception.getMessage()));
       }

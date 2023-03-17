@@ -37,6 +37,8 @@ jobs:
 
   deploy:
     <<: *defaults
+    docker: # executor type
+      image: circleci/openjdk:11.0.13-buster
     steps:
        - checkout
        - restore_cache:

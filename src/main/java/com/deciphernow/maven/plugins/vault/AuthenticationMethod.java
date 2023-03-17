@@ -1,23 +1,18 @@
 package com.deciphernow.maven.plugins.vault;
 
-import com.bettercloud.vault.VaultConfig;
 import com.bettercloud.vault.VaultException;
-import com.deciphernow.maven.plugins.vault.config.Server;
+import com.bettercloud.vault.api.Auth;
 
 public abstract class AuthenticationMethod {
 
-  VaultConfig vaultConfig;
-  Server server;
+  Auth auth;
 
   /**
    * Initializes a new instance of the {@link AuthenticationMethod} class.
-   * @param server server
-   * @throws VaultException if an exception is thrown based upon the vault configuration
+   * @param auth Auth
    */
-  public AuthenticationMethod(Server server) throws VaultException {
-    this.server = server;
-    this.vaultConfig = Vaults.vaultConfig(server.getUrl(), server.getToken(), server.getNamespace(),
-            server.getSslVerify(), server.getSslCertificate(), server.getEngineVersion());
+  public AuthenticationMethod(Auth auth) {
+    this.auth = auth;
   }
 
   public abstract void login() throws VaultException;

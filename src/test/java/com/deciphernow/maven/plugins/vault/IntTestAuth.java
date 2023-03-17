@@ -1,10 +1,7 @@
 package com.deciphernow.maven.plugins.vault;
 
 import com.bettercloud.vault.VaultException;
-import com.deciphernow.maven.plugins.vault.config.Authentication;
-import com.deciphernow.maven.plugins.vault.config.Mapping;
-import com.deciphernow.maven.plugins.vault.config.Path;
-import com.deciphernow.maven.plugins.vault.config.Server;
+import com.deciphernow.maven.plugins.vault.config.*;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -30,7 +27,7 @@ public class IntTestAuth {
     private static final String VAULT_HOST = System.getProperty("vault.host", "localhost");
     private static final String VAULT_PORT = System.getProperty("vault.port", "443");
     private static final String VAULT_SERVER = String.format("https://%s:%s", VAULT_HOST, VAULT_PORT);
-    private static final Map<String,String> VAULT_GITHUB_AUTH = Map.of(Authentication.GITHUB_TOKEN_TAG, System.getProperty("vault.github.token"));
+    private static final Map<String,String> VAULT_GITHUB_AUTH = Map.of(AuthenticationMethodFactory.GITHUB_TOKEN_TAG, System.getProperty("vault.github.token"));
 
     private static Mapping randomMapping() {
         return new Mapping(UUID.randomUUID().toString(), UUID.randomUUID().toString());
@@ -53,11 +50,14 @@ public class IntTestAuth {
         private final List<Server> servers;
         private final Properties properties;
 
+        private final AuthenticationMethodProvider authenticationMethodProvider;
+
         private Fixture() throws URISyntaxException {
             List<Path> paths = randomPaths(10, 10);
             File certificate = new File(VAULT_CERTIFICATE.toURI());
             this.servers = ImmutableList.of(new Server(VAULT_SERVER, null, true, certificate, VAULT_GITHUB_AUTH, "", paths, false, 2));
             this.properties = new Properties();
+            this.authenticationMethodProvider = new AuthenticationMethodFactory();
             this.servers.stream().forEach(server -> {
                 server.getPaths().stream().forEach(path -> {
                     path.getMappings().stream().forEach(mapping -> {
@@ -133,7 +133,7 @@ public class IntTestAuth {
             mojo.servers = fixture.servers;
             mojo.skipExecution = false;
             try {
-                Vaults.authenticateIfNecessary(fixture.servers);
+                Vaults.authenticateIfNecessary(fixture.servers, fixture.authenticationMethodProvider);
                 Vaults.push(fixture.servers, fixture.properties);
                 mojo.execute();
                 assertTrue(Maps.difference(fixture.properties, mojo.project.getProperties()).areEqual());

@@ -1,27 +1,24 @@
 package com.deciphernow.maven.plugins.vault;
 
-import static com.deciphernow.maven.plugins.vault.Vaults.vaultConfig;
-import static com.deciphernow.maven.plugins.vault.config.Authentication.GITHUB_TOKEN_TAG;
+import static com.deciphernow.maven.plugins.vault.config.AuthenticationMethodFactory.GITHUB_TOKEN_TAG;
 
-import com.bettercloud.vault.SslConfig;
-import com.bettercloud.vault.VaultConfig;
 import com.bettercloud.vault.VaultException;
 import com.bettercloud.vault.api.Auth;
-import com.deciphernow.maven.plugins.vault.config.Authentication;
 import com.deciphernow.maven.plugins.vault.config.Server;
 
-
-
 public class GithubToken extends AuthenticationMethod {
+
+  Server server;
 
   /**
    * Initializes a new instance of the {@link AuthenticationMethod} class.
    *
-   * @param server server
-   * @throws VaultException if an exception is thrown based upon the vault configuration
+   * @param auth Auth
+   * @param server Server
    */
-  public GithubToken(Server server) throws VaultException {
-    super(server);
+  public GithubToken(Auth auth, Server server) {
+    super(auth);
+    this.server = server;
   }
 
   /**
@@ -31,7 +28,7 @@ public class GithubToken extends AuthenticationMethod {
    */
   public void login() throws VaultException {
 
-    String token = new Auth(vaultConfig)
+    String token = auth
                 .loginByGithub(server.getAuthentication().get(GITHUB_TOKEN_TAG))
                 .getAuthClientToken();
 

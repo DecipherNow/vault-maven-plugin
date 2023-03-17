@@ -2,7 +2,7 @@ version: 2
 
 defaults: &defaults
   machine: true
-  working_directory: ~/deciphernow/vault-maven-plugin
+  working_directory: ~/homeofthewizard/vault-maven-plugin
   parallelism: 1
   shell: /bin/bash --login
 

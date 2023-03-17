@@ -56,7 +56,7 @@ public class IntTestAuth {
         private Fixture() throws URISyntaxException {
             List<Path> paths = randomPaths(10, 10);
             File certificate = new File(VAULT_CERTIFICATE.toURI());
-            this.servers = ImmutableList.of(new Server(VAULT_SERVER, null, true, certificate, VAULT_GITHUB_AUTH, "", paths, false, 1));
+            this.servers = ImmutableList.of(new Server(VAULT_SERVER, null, true, certificate, VAULT_GITHUB_AUTH, "", paths, false, 2));
             this.properties = new Properties();
             this.servers.stream().forEach(server -> {
                 server.getPaths().stream().forEach(path -> {

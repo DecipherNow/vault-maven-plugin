@@ -64,6 +64,7 @@
         <docker.network>vault-maven-plugin-${maven.build.timestamp}</docker.network>
         <docker.nginx.host>nginx.docker</docker.nginx.host>
         <docker.vault.host>vault.docker</docker.vault.host>
+        <docker.nginx.port>443</docker.nginx.port>
         <docker.vault.token>6edb70bd-3398-1f42-d67e-b9db377223cd</docker.vault.token>
         <docker.vault.github.token>MY_GITHUB_PAT_FOR_TESTS</docker.vault.github.token>
         <jacoco.integration.file>${project.build.directory}/jacoco-integration.exec</jacoco.integration.file>
@@ -76,6 +77,8 @@
         <version.bouncycastle.plugin>1.0.0</version.bouncycastle.plugin>
         <version.checkstyle.plugin>2.17</version.checkstyle.plugin>
         <version.compiler.plugin>3.8.1</version.compiler.plugin>
+        <version.java.source>11</version.java.source>
+        <version.java.target>11</version.java.target>
         <version.docker.plugin>0.38.0</version.docker.plugin>
         <version.failsafe.plugin>${version.surefire.plugin}</version.failsafe.plugin>
         <version.freemarker>2.3.23</version.freemarker>
@@ -93,7 +96,7 @@
         <version.plugin.plugin>3.6.2</version.plugin.plugin>
         <version.source.plugin>3.0.1</version.source.plugin>
         <version.surefire.plugin>2.22.0</version.surefire.plugin>
-        <version.vault>0.6.5</version.vault>
+        <version.vault>1.9.2</version.vault>
         <version.vault.driver>5.1.0</version.vault.driver>
     </properties>
 
@@ -286,7 +289,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${version.compiler.plugin}</version>
                 <configuration>
-                    <release>11</release>
+                    <source>${version.java.source}</source>
+                    <target>${version.java.target}</target>
                 </configuration>
             </plugin>
             <plugin>

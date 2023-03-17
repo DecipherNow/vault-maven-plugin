@@ -1,0 +1,6 @@
+POST https://localhost:443/
+Content-Type: application/json
+
+{
+  "token": "6edb70bd-3398-1f42-d67e-b9db377223cd"
+}

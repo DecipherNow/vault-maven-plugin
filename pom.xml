@@ -20,14 +20,14 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.deciphernow</groupId>
+    <groupId>com.homeofthewizard</groupId>
     <artifactId>vault-maven-plugin</artifactId>
     <version>1.1.1-SNAPSHOT</version>
     <packaging>maven-plugin</packaging>
 
     <name>Vault Maven Plugin</name>
     <description>A plugin that supports retrieving values from HashiCorp Vault.</description>
-    <url>https://github.com/deciphernow/vault-maven-plugin</url>
+    <url>https://github.com/homeofthewizard/vault-maven-plugin</url>
 
     <licenses>
         <license>
@@ -37,9 +37,9 @@
     </licenses>
 
     <scm>
-        <connection>scm:git:git@github.com:deciphernow/vault-maven-plugin.git</connection>
-        <developerConnection>scm:git:git@github.com:deciphernow/vault-maven-plugin.git</developerConnection>
-        <url>https://github.com/deciphernow/vault-maven-plugin</url>
+        <connection>scm:git:git@github.com:homeofthewizard/vault-maven-plugin</connection>
+        <developerConnection>scm:git:git@github.com:homeofthewizard/vault-maven-plugin.git</developerConnection>
+        <url>https://github.com/homeofthewizard/vault-maven-plugin</url>
     </scm>
 
     <distributionManagement>
@@ -55,9 +55,8 @@
 
     <developers>
         <developer>
-            <name>Joshua Mark Rutherford</name>
-            <organization>Decipher Technology Studios</organization>
-            <email>joshua.rutherford@deciphernow.com</email>
+            <name>Ozgun OZ</name>
+            <email>ozgunn.oz@gmail.com</email>
         </developer>
     </developers>
 
@@ -66,7 +65,7 @@
         <docker.nginx.host>nginx.docker</docker.nginx.host>
         <docker.vault.host>vault.docker</docker.vault.host>
         <docker.vault.token>6edb70bd-3398-1f42-d67e-b9db377223cd</docker.vault.token>
-        <docker.vault.github.token>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</docker.vault.github.token>
+        <docker.vault.github.token>MY_GITHUB_PAT_FOR_TESTS</docker.vault.github.token>
         <jacoco.integration.file>${project.build.directory}/jacoco-integration.exec</jacoco.integration.file>
         <jacoco.merged.file>${project.build.directory}/jacoco.exec</jacoco.merged.file>
         <jacoco.unit.file>${project.build.directory}/jacoco-unit.exec</jacoco.unit.file>

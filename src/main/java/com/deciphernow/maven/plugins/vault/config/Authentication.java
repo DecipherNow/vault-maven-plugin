@@ -6,7 +6,7 @@ import com.deciphernow.maven.plugins.vault.GithubToken;
 
 import java.util.List;
 
-public class Authentication {
+public final class Authentication {
 
   public static final String GITHUB_TOKEN_TAG = "githubToken";
   public static final List<String> methods = List.of(GITHUB_TOKEN_TAG);

@@ -50,12 +50,16 @@ abstract class VaultMojo extends AbstractMojo {
 
   @Override
   public void execute() throws MojoExecutionException {
+    executeVaultAuthentication();
+    executeVaultOperation();
+  }
+
+  private void executeVaultAuthentication() throws MojoExecutionException {
     try {
       Vaults.authenticateIfNecessary(servers);
     } catch (VaultException e) {
       throw new MojoExecutionException("Exception thrown authenticating.", e);
     }
-    executeVaultOperation();
   }
 
   abstract void executeVaultOperation() throws MojoExecutionException;

@@ -1,7 +1,7 @@
-package com.deciphernow.maven.plugins.vault;
+package com.homeofthewizard.maven.plugins.vault;
 
 import com.bettercloud.vault.VaultException;
-import com.deciphernow.maven.plugins.vault.config.*;
+import com.homeofthewizard.maven.plugins.vault.config.*;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 import org.apache.maven.plugin.MojoExecutionException;

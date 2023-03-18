@@ -31,11 +31,11 @@
     <distributionManagement>
         <snapshotRepository>
             <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
         </snapshotRepository>
         <repository>
             <id>ossrh</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+            <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
     </distributionManagement>
 
@@ -71,7 +71,7 @@
         <version.guava>31.0.1-jre</version.guava>
         <version.jacoco>0.8.7</version.jacoco>
         <version.jacoco.plugin>${version.jacoco}</version.jacoco.plugin>
-        <version.javadoc.plugin>2.10.4</version.javadoc.plugin>
+        <version.javadoc.plugin>3.2.0</version.javadoc.plugin>
         <version.junit>4.13.2</version.junit>
         <version.maven>3.8.1</version.maven>
         <version.moby>1.0.0</version.moby>
@@ -410,7 +410,7 @@
                                         <limit>
                                             <counter>COMPLEXITY</counter>
                                             <value>COVEREDRATIO</value>
-                                            <minimum>0.30</minimum>
+                                            <minimum>0.50</minimum>
                                         </limit>
                                     </limits>
                                 </rule>

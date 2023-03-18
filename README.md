@@ -1,10 +1,15 @@
+
 # vault-maven-plugin
+[![CircleCI](https://dl.circleci.com/status-badge/img/gh/HomeOfTheWizard/vault-maven-plugin/tree/master.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/HomeOfTheWizard/vault-maven-plugin/tree/master)
+[![codecov](https://codecov.io/gh/HomeOfTheWizard/vault-maven-plugin/branch/master/graph/badge.svg)](https://codecov.io/gh/HomeOfTheWizard/vault-maven-plugin)
+[![Sonatype Nexus (Snapshots)](https://img.shields.io/nexus/s/com.homeofthewizard/vault-maven-plugin?label=nexus-snapshots&server=https%3A%2F%2Fs01.oss.sonatype.org)](https://s01.oss.sonatype.org/content/repositories/snapshots/com/homeofthewizard/vault-maven-plugin/)
+[![Maven Central](https://img.shields.io/maven-central/v/com.homeofthewizard/vault-maven-plugin?color=green)]()
 
 This Maven plugin supports pull and pushing Maven project properties from secrets stored in [HashiCorp](https://www.hashicorp.com) [Vault](https://www.vaultproject.io/).  
 Forked project from [dechiphernow/vault-maven-plugin](https://github.com/DecipherNow/vault-maven-plugin)
   
 Added new features:    
- * Upgraded compile settings to java 11  
+* Upgraded compile settings to java 11  
 * Upgraded vault driver to use KV2 engine
 * Added GitHub token authentication method.  
   :warning: In order to run the integration tests, you need to pass a github token as environment variable in your pom.xml,  

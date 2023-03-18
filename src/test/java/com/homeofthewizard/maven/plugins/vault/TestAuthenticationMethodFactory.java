@@ -1,21 +1,17 @@
-package com.deciphernow.maven.plugins.vault;
+package com.homeofthewizard.maven.plugins.vault;
 
 import com.bettercloud.vault.VaultException;
-import com.deciphernow.maven.plugins.vault.config.AuthenticationMethodFactory;
-import com.deciphernow.maven.plugins.vault.config.Server;
+import com.homeofthewizard.maven.plugins.vault.config.AuthenticationMethodFactory;
+import com.homeofthewizard.maven.plugins.vault.config.Server;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.mockito.Mockito;
 
-import java.util.List;
 import java.util.Map;
 
 import static java.util.List.of;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
 
 public class TestAuthenticationMethodFactory {
 

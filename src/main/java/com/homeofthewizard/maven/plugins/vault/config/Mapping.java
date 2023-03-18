@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.deciphernow.maven.plugins.vault.config;
+package com.homeofthewizard.maven.plugins.vault.config;
 
 import java.io.Serializable;
 import java.util.Objects;

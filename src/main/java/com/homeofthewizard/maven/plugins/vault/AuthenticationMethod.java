@@ -1,4 +1,4 @@
-package com.deciphernow.maven.plugins.vault;
+package com.homeofthewizard.maven.plugins.vault;
 
 import com.bettercloud.vault.VaultException;
 import com.bettercloud.vault.api.Auth;

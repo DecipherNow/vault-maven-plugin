@@ -1,10 +1,10 @@
-package com.deciphernow.maven.plugins.vault.config;
+package com.homeofthewizard.maven.plugins.vault.config;
 
 import com.bettercloud.vault.VaultException;
 import com.bettercloud.vault.api.Auth;
-import com.deciphernow.maven.plugins.vault.AuthenticationMethod;
-import com.deciphernow.maven.plugins.vault.GithubToken;
-import com.deciphernow.maven.plugins.vault.Vaults;
+import com.homeofthewizard.maven.plugins.vault.AuthenticationMethod;
+import com.homeofthewizard.maven.plugins.vault.GithubToken;
+import com.homeofthewizard.maven.plugins.vault.Vaults;
 
 import java.util.List;
 

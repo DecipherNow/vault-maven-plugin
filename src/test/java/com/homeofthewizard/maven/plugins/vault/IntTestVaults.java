@@ -14,17 +14,13 @@
  * limitations under the License.
  */
 
-package com.deciphernow.maven.plugins.vault;
+package com.homeofthewizard.maven.plugins.vault;
 
 import com.bettercloud.vault.VaultException;
-import com.deciphernow.maven.plugins.vault.config.AuthenticationMethodFactory;
-import com.deciphernow.maven.plugins.vault.config.Mapping;
-import com.deciphernow.maven.plugins.vault.config.Path;
-import com.deciphernow.maven.plugins.vault.config.Server;
+import com.homeofthewizard.maven.plugins.vault.config.*;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.project.MavenProject;
+import com.homeofthewizard.maven.plugins.vault.config.*;
 import org.junit.Test;
 
 import java.io.File;
@@ -41,7 +37,10 @@ import java.util.stream.IntStream;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-public class IntTestPullMojo {
+/**
+ * Provides integration tests for the {@link Vaults} class.
+ */
+public class IntTestVaults {
 
   private static final URL VAULT_CERTIFICATE = IntTestVaults.class.getResource("certificate.pem");
   private static final String VAULT_HOST = System.getProperty("vault.host", "localhost");
@@ -59,7 +58,7 @@ public class IntTestPullMojo {
   }
 
   private static Path randomPath(int mappingCount) {
-    return new Path(String.format("secret/%s", UUID.randomUUID().toString()), randomMappings(mappingCount));
+    return new Path(String.format("secret/%s", UUID.randomUUID()), randomMappings(mappingCount));
   }
 
   private static List<Path> randomPaths(int pathCount, int mappingCount) {
@@ -68,15 +67,18 @@ public class IntTestPullMojo {
 
   private static class Fixture {
 
+    private final AuthenticationMethodProvider authenticationMethodProvider;
     private final List<Server> servers;
     private final Properties properties;
 
     private Fixture() throws URISyntaxException {
       List<Path> paths = randomPaths(10, 10);
       File certificate = new File(VAULT_CERTIFICATE.toURI());
+      boolean skipExecution = false;
       System.out.println(String.format("%s/%s", VAULT_SERVER, VAULT_TOKEN));
-      this.servers = ImmutableList.of(new Server(VAULT_SERVER, VAULT_TOKEN, true, certificate, VAULT_GITHUB_AUTH, "", paths, false, 2));
+      this.servers = ImmutableList.of(new Server(VAULT_SERVER, VAULT_TOKEN, true, certificate, VAULT_GITHUB_AUTH, "", paths, skipExecution, 2));
       this.properties = new Properties();
+      this.authenticationMethodProvider = new AuthenticationMethodFactory();
       this.servers.stream().forEach(server -> {
         server.getPaths().stream().forEach(path -> {
           path.getMappings().stream().forEach(mapping -> {
@@ -86,33 +88,49 @@ public class IntTestPullMojo {
       });
     }
 
-    private static void with(Consumer<IntTestPullMojo.Fixture> test) throws URISyntaxException {
-      test.accept(new IntTestPullMojo.Fixture());
+    private static void with(Consumer<Fixture> test) throws URISyntaxException {
+      test.accept(new Fixture());
     }
 
   }
 
   /**
-   * Tests the {@link PullMojo#execute()} method.
+   * Tests the {@link Vaults#pull(List, Properties)} and {@link Vaults#push(List, Properties)} methods.
    *
    * @throws URISyntaxException if an exception is raised parsing the certificate
    */
   @Test
-  public void testExecute() throws URISyntaxException {
-    IntTestPullMojo.Fixture.with(fixture -> {
-      PullMojo mojo = new PullMojo();
-      mojo.project = new MavenProject();
-      mojo.servers = fixture.servers;
-      mojo.skipExecution = false;
+  public void testPushAndPull() throws URISyntaxException {
+    Fixture.with(fixture -> {
       try {
         Vaults.push(fixture.servers, fixture.properties);
-        mojo.execute();
-        assertTrue(Maps.difference(fixture.properties, mojo.project.getProperties()).areEqual());
-      } catch (MojoExecutionException exception) {
-        fail(String.format("Unexpected exception while executing: %s", exception.getMessage()));
+        Properties properties = new Properties();
+        try {
+          Vaults.pull(fixture.servers, properties);
+          assertTrue(Maps.difference(fixture.properties, properties).areEqual());
+        } catch (VaultException exception) {
+          fail(String.format("Unexpected exception while pulling to Vault: %s", exception.getMessage()));
+        }
       } catch (VaultException exception) {
         fail(String.format("Unexpected exception while pushing to Vault: %s", exception.getMessage()));
       }
     });
   }
+
+  /**
+   * Tests the {@link Vaults#authenticateIfNecessary(List<Server>, AuthenticationMethodProvider)} method.
+   *
+   * @throws URISyntaxException if an exception is raised parsing the certificate
+   */
+  @Test
+  public void testAuthentication() throws URISyntaxException {
+    Fixture.with(fixture -> {
+      try {
+        Vaults.authenticateIfNecessary(fixture.servers, fixture.authenticationMethodProvider);
+      } catch (VaultException exception) {
+        fail(String.format("Unexpected exception while pushing to Vault: %s", exception.getMessage()));
+      }
+    });
+  }
+
 }

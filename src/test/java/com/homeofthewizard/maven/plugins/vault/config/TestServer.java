@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.deciphernow.maven.plugins.vault.config;
+package com.homeofthewizard.maven.plugins.vault.config;
 
 import com.google.common.testing.EqualsTester;
 import org.junit.Test;

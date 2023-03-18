@@ -1,7 +1,7 @@
-package com.deciphernow.maven.plugins.vault.config;
+package com.homeofthewizard.maven.plugins.vault.config;
 
 import com.bettercloud.vault.VaultException;
-import com.deciphernow.maven.plugins.vault.AuthenticationMethod;
+import com.homeofthewizard.maven.plugins.vault.AuthenticationMethod;
 
 public interface AuthenticationMethodProvider {
 

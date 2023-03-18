@@ -1,7 +1,11 @@
-version: 2
+version: 2.1
+
+orbs:
+  codecov: codecov/codecov@3.2.3
 
 defaults: &defaults
-  machine: true
+  machine:
+    image: ubuntu-2004:202010-01
   working_directory: ~/homeofthewizard/vault-maven-plugin
   parallelism: 1
   shell: /bin/bash --login
@@ -24,8 +28,6 @@ jobs:
 
   build:
     <<: *defaults
-    machine: # executor type
-      image: ubuntu-2004:202010-01 # # recommended linux image - includes Ubuntu 20.04, docker 19.03.13, docker-compose 1.27.4
     steps:
       - checkout
       - restore_cache:
@@ -33,12 +35,15 @@ jobs:
             - cache-{{ .Branch }}-{{ .Revision }}
             - cache-{{ .Branch }}
             - cache
-      - run: mvn verify
+      - run:
+          command: "mvn verify"
+      - codecov/upload:
+          file: ./target/site/jacoco/jacoco.xml
 
   deploy:
     <<: *defaults
-    docker: # executor type
-      image: circleci/openjdk:11.0.13-buster
+    environment:
+      JAVA_HOME: /usr/lib/jvm/java-11-openjdk-amd64
     steps:
        - checkout
        - restore_cache:
@@ -46,10 +51,10 @@ jobs:
              - cache-{{ .Branch }}-{{ .Revision }}
              - cache-{{ .Branch }}
              - cache
-       - run: PGP_RINGS="$(echo ${PGP_RINGS_ENCODED} | base64 --decode)" mvn deploy -P deploy -s settings.xml
+       - run: PGP_RINGS="$(echo ${PGP_RINGS_ENCODED} | base64 --decode)" mvn deploy -P deploy -s ./settings.xml
 
 workflows:
-  version: 2
+  version: 2.1
   build-and-deploy:
     jobs:
       - cache:

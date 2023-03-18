@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.deciphernow.maven.plugins.vault;
+package com.homeofthewizard.maven.plugins.vault;
 
-import static com.deciphernow.maven.plugins.vault.config.AuthenticationMethodFactory.methods;
+import static com.homeofthewizard.maven.plugins.vault.config.AuthenticationMethodFactory.methods;
 
 import com.google.common.base.Strings;
 
@@ -24,10 +24,10 @@ import com.bettercloud.vault.SslConfig;
 import com.bettercloud.vault.Vault;
 import com.bettercloud.vault.VaultConfig;
 import com.bettercloud.vault.VaultException;
-import com.deciphernow.maven.plugins.vault.config.AuthenticationMethodProvider;
-import com.deciphernow.maven.plugins.vault.config.Mapping;
-import com.deciphernow.maven.plugins.vault.config.Path;
-import com.deciphernow.maven.plugins.vault.config.Server;
+import com.homeofthewizard.maven.plugins.vault.config.AuthenticationMethodProvider;
+import com.homeofthewizard.maven.plugins.vault.config.Mapping;
+import com.homeofthewizard.maven.plugins.vault.config.Path;
+import com.homeofthewizard.maven.plugins.vault.config.Server;
 
 import java.io.File;
 import java.util.HashMap;

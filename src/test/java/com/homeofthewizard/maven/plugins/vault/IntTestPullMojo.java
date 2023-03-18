@@ -14,34 +14,34 @@
  * limitations under the License.
  */
 
-package com.deciphernow.maven.plugins.vault;
+package com.homeofthewizard.maven.plugins.vault;
 
-    import com.bettercloud.vault.VaultException;
-    import com.deciphernow.maven.plugins.vault.config.AuthenticationMethodFactory;
-    import com.deciphernow.maven.plugins.vault.config.Mapping;
-    import com.deciphernow.maven.plugins.vault.config.Path;
-    import com.deciphernow.maven.plugins.vault.config.Server;
-    import com.google.common.collect.ImmutableList;
-    import com.google.common.collect.Maps;
-    import org.apache.maven.plugin.MojoExecutionException;
-    import org.apache.maven.project.MavenProject;
-    import org.junit.Test;
+import com.bettercloud.vault.VaultException;
+import com.homeofthewizard.maven.plugins.vault.config.AuthenticationMethodFactory;
+import com.homeofthewizard.maven.plugins.vault.config.Mapping;
+import com.homeofthewizard.maven.plugins.vault.config.Path;
+import com.homeofthewizard.maven.plugins.vault.config.Server;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Maps;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.project.MavenProject;
+import org.junit.Test;
 
-    import java.io.File;
-    import java.net.URISyntaxException;
-    import java.net.URL;
-    import java.util.List;
-    import java.util.Map;
-    import java.util.Properties;
-    import java.util.UUID;
-    import java.util.function.Consumer;
-    import java.util.stream.Collectors;
-    import java.util.stream.IntStream;
+import java.io.File;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.UUID;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
-    import static org.junit.Assert.assertTrue;
-    import static org.junit.Assert.fail;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
-public class IntTestPushMojo {
+public class IntTestPullMojo {
 
   private static final URL VAULT_CERTIFICATE = IntTestVaults.class.getResource("certificate.pem");
   private static final String VAULT_HOST = System.getProperty("vault.host", "localhost");
@@ -86,31 +86,27 @@ public class IntTestPushMojo {
       });
     }
 
-    private static void with(Consumer<Fixture> test) throws URISyntaxException {
-      test.accept(new IntTestPushMojo.Fixture());
+    private static void with(Consumer<IntTestPullMojo.Fixture> test) throws URISyntaxException {
+      test.accept(new IntTestPullMojo.Fixture());
     }
 
   }
 
   /**
-   * Tests the {@link PushMojo#execute()} method.
+   * Tests the {@link PullMojo#execute()} method.
    *
    * @throws URISyntaxException if an exception is raised parsing the certificate
    */
   @Test
   public void testExecute() throws URISyntaxException {
-    IntTestPushMojo.Fixture.with(fixture -> {
-      PushMojo mojo = new PushMojo();
+    IntTestPullMojo.Fixture.with(fixture -> {
+      PullMojo mojo = new PullMojo();
       mojo.project = new MavenProject();
       mojo.servers = fixture.servers;
       mojo.skipExecution = false;
-      fixture.properties.stringPropertyNames().stream().forEach(key -> {
-        mojo.project.getProperties().setProperty(key, fixture.properties.getProperty(key));
-      });
-      Properties properties = new Properties();
       try {
+        Vaults.push(fixture.servers, fixture.properties);
         mojo.execute();
-        Vaults.pull(fixture.servers, properties);
         assertTrue(Maps.difference(fixture.properties, mojo.project.getProperties()).areEqual());
       } catch (MojoExecutionException exception) {
         fail(String.format("Unexpected exception while executing: %s", exception.getMessage()));

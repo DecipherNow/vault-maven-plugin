@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.deciphernow.maven.plugins.vault;
+package com.homeofthewizard.maven.plugins.vault;
 
 import com.bettercloud.vault.VaultException;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -24,11 +24,11 @@ import org.apache.maven.plugins.annotations.Mojo;
 /**
  * Provides a Mojo that pulls values from Vault and sets Maven properties.
  */
-@Mojo(name = "pull", defaultPhase = LifecyclePhase.INITIALIZE)
-public class PullMojo extends VaultMojo {
+@Mojo(name = "push", defaultPhase = LifecyclePhase.VERIFY)
+public class PushMojo extends VaultMojo {
 
   /**
-   * Executes this Mojo which pulls project property values from Vault.
+   * Executes this Mojo which pushes a project property values to Vault.
    *
    * @throws MojoExecutionException if an exception is thrown based upon the project configuration
    */
@@ -37,9 +37,9 @@ public class PullMojo extends VaultMojo {
       return;
     }
     try {
-      Vaults.pull(this.servers, this.project.getProperties());
+      Vaults.push(this.servers, this.project.getProperties());
     } catch (VaultException exception) {
-      throw new MojoExecutionException("Exception thrown pulling secrets.", exception);
+      throw new MojoExecutionException("Exception thrown pushing secrets.", exception);
     }
   }
 

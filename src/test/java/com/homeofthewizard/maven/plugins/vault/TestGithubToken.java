@@ -1,10 +1,10 @@
-package com.deciphernow.maven.plugins.vault;
+package com.homeofthewizard.maven.plugins.vault;
 
 import com.bettercloud.vault.VaultException;
 import com.bettercloud.vault.api.Auth;
 import com.bettercloud.vault.response.AuthResponse;
-import com.deciphernow.maven.plugins.vault.config.AuthenticationMethodFactory;
-import com.deciphernow.maven.plugins.vault.config.Server;
+import com.homeofthewizard.maven.plugins.vault.config.AuthenticationMethodFactory;
+import com.homeofthewizard.maven.plugins.vault.config.Server;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;

@@ -1,10 +1,10 @@
-package com.deciphernow.maven.plugins.vault;
+package com.homeofthewizard.maven.plugins.vault;
 
-import static com.deciphernow.maven.plugins.vault.config.AuthenticationMethodFactory.GITHUB_TOKEN_TAG;
+import static com.homeofthewizard.maven.plugins.vault.config.AuthenticationMethodFactory.GITHUB_TOKEN_TAG;
 
 import com.bettercloud.vault.VaultException;
 import com.bettercloud.vault.api.Auth;
-import com.deciphernow.maven.plugins.vault.config.Server;
+import com.homeofthewizard.maven.plugins.vault.config.Server;
 
 public class GithubToken extends AuthenticationMethod {
 

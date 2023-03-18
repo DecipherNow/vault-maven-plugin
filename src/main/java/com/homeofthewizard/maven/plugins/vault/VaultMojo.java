@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.deciphernow.maven.plugins.vault;
+package com.homeofthewizard.maven.plugins.vault;
 
 import com.bettercloud.vault.VaultException;
-import com.deciphernow.maven.plugins.vault.config.AuthenticationMethodFactory;
-import com.deciphernow.maven.plugins.vault.config.AuthenticationMethodProvider;
-import com.deciphernow.maven.plugins.vault.config.Server;
+import com.homeofthewizard.maven.plugins.vault.config.AuthenticationMethodFactory;
+import com.homeofthewizard.maven.plugins.vault.config.AuthenticationMethodProvider;
+import com.homeofthewizard.maven.plugins.vault.config.Server;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Parameter;

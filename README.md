@@ -8,12 +8,11 @@
 This Maven plugin supports pull and pushing Maven project properties from secrets stored in [HashiCorp](https://www.hashicorp.com) [Vault](https://www.vaultproject.io/).  
 Forked project from [dechiphernow/vault-maven-plugin](https://github.com/DecipherNow/vault-maven-plugin)
   
-Added new features:    
-* Upgraded compile settings to java 11  
+Added new features :rocket: :    
+* compile with JDK 11  
 * Upgraded vault driver to use KV2 engine
-* Added GitHub token authentication method.  
-  :warning: In order to run the integration tests, you need to pass a github token as environment variable in your pom.xml,  
-and change accordingly the setup script enable-github-auth.sh  
+* Added vault authentication methods (see below for details).
+* Added vault namespace option
 
 ## Usage
 
@@ -128,8 +127,88 @@ In order to pull secrets you must add an execution to the plugin.  The following
     </plugins>
 </build>
 ```
+Note that the execution will fail if a specified project property does not exist and that an existing secret value will be overwritten.  
 
-Note that the execution will fail if a specified project property does not exist and that an existing secret value will be overwritten.
+### Authentication
+In order to pull or push secrets you may have to authenticate to the vault, which is generally the case.    
+Using a prefetched token works fine (provided in the `<token>` tag),
+
+```
+<build>
+    <plugins>
+        <plugin>
+            <groupId>com.homeofthewizard</groupId>
+            <artifactId>vault-maven-plugin</artifactId>
+            <version>1.1.1-SNAPSHOT</version>
+            <executions>
+                <execution>
+                    <id>push</id>
+                    <phase>verify</phase>
+                    <goals>
+                        <goal>push</goal>
+                    </goals>
+                    <configuration>
+                        <servers>
+                            <server>
+                                <url>https://vault.example.com</url>
+                                <token>bf6ba314-47f1-4b9d-ab87-2b8e53fc640f</token>
+                                <paths>
+                                    ...
+                                </paths>
+                            </server>
+                        </servers>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+    </plugins>
+</build>
+```
+
+But if you want to automate the login process as well you can do it via the plugin directly.  
+You can provide the configs under the `<authentication>` tag.
+:warning: You should now remove the `token` tag entirely. An empty token tag is not allowed.
+
+You have the following options enabled currently (others will follow soon):
+* Github PAT
+
+#### Github PAT
+  
+Use `<githubToken>` under the `<authentication>` tag, as in the following example.  
+
+```
+<build>
+    <plugins>
+        <plugin>
+            <groupId>com.homeofthewizard</groupId>
+            <artifactId>vault-maven-plugin</artifactId>
+            <version>1.1.1-SNAPSHOT</version>
+            <executions>
+                <execution>
+                    <id>push</id>
+                    <phase>verify</phase>
+                    <goals>
+                        <goal>push</goal>
+                    </goals>
+                    <configuration>
+                        <servers>
+                            <server>
+                                <authentication>
+                                    <githubToken>XXXXXXXXXXXXXXXXXXXXXXXXXXXXX</githubToken>
+                                </authentication>
+                                <url>https://vault.example.com</url>
+                                <paths>
+                                    ...
+                                </paths>
+                            </server>
+                        </servers>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+    </plugins>
+</build>
+```
 
 ## Building
 
@@ -137,7 +216,11 @@ This build uses standard Maven build commands but assumes that the following are
 
 1) Java (1.8 or greater)
 1) Maven (3.0 or greater)
-1) Docker
+1) Docker  
+
+:warning: You also need to create a Github PAT,  
+pass it as an environment variable in your [pom.xml](https://github.com/HomeOfTheWizard/vault-maven-plugin/blob/b8202ffe3afd1ec523a5cfa963f8a5caca6406bb/pom.xml#L55) `${env.MY_GITHUB_PAT_FOR_VAULT_LOGIN}`.
+This is needed for integration tests related to authentication features.
 
 ## Contributing
 

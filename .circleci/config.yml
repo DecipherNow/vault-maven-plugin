@@ -2,6 +2,7 @@ version: 2.1
 
 orbs:
   codecov: codecov/codecov@3.2.3
+  circleci-maven-release-orb: sonatype-nexus-community/circleci-maven-release-orb@0.0.18
 
 defaults: &defaults
   machine:
@@ -35,8 +36,7 @@ jobs:
             - cache-{{ .Branch }}-{{ .Revision }}
             - cache-{{ .Branch }}
             - cache
-      - run:
-          command: "mvn verify"
+      - run: mvn verify
       - codecov/upload:
           file: ./target/site/jacoco/jacoco.xml
 
@@ -51,7 +51,10 @@ jobs:
              - cache-{{ .Branch }}-{{ .Revision }}
              - cache-{{ .Branch }}
              - cache
-       - run: PGP_RINGS="$(echo ${PGP_RINGS_ENCODED} | base64 --decode)" mvn deploy -P deploy -s ./settings.xml
+       - add_ssh_keys:
+           fingerprints:
+             - "d5:f2:ab:92:e3:77:03:67:52:87:a9:4d:f9:bd:ef:5b"
+       - run: PGP_RINGS="$(echo ${PGP_RINGS_ENCODED} | base64 --decode)" mvn --batch-mode release:clean release:prepare release:perform -s ./settings.xml
 
 workflows:
   version: 2.1

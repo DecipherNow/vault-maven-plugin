@@ -6,7 +6,7 @@
 
     <groupId>com.homeofthewizard</groupId>
     <artifactId>vault-maven-plugin</artifactId>
-    <version>1.1.1</version>
+    <version>1.1.2-SNAPSHOT</version>
     <packaging>maven-plugin</packaging>
 
     <name>Vault Maven Plugin</name>
@@ -24,7 +24,7 @@
         <connection>scm:git:git@github.com:homeofthewizard/vault-maven-plugin</connection>
         <developerConnection>scm:git:git@github.com:homeofthewizard/vault-maven-plugin.git</developerConnection>
         <url>https://github.com/homeofthewizard/vault-maven-plugin</url>
-      <tag>vault-maven-plugin-1.1.1</tag>
+      <tag>HEAD</tag>
   </scm>
 
     <distributionManagement>

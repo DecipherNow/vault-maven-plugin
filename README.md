@@ -6,13 +6,14 @@
 [![Maven Central](https://img.shields.io/maven-central/v/com.homeofthewizard/vault-maven-plugin?color=green)]()
 
 This Maven plugin supports pull and pushing Maven project properties from secrets stored in [HashiCorp](https://www.hashicorp.com) [Vault](https://www.vaultproject.io/).  
-Forked project from [dechiphernow/vault-maven-plugin](https://github.com/DecipherNow/vault-maven-plugin)
+  
+Forked project from [dechiphernow/vault-maven-plugin](https://github.com/DecipherNow/vault-maven-plugin) :thumbsup:
   
 Added new features :rocket: :    
 * compile with JDK 11  
 * Upgraded vault driver to use KV2 engine
 * Added vault authentication methods (see below for details).
-* Added vault namespace option
+* Added Enterprise :factory: features like Namespace 
 
 ## Usage
 
@@ -214,7 +215,7 @@ Use `<githubToken>` under the `<authentication>` tag, as in the following exampl
 
 This build uses standard Maven build commands but assumes that the following are installed and configured locally:
 
-1) Java (1.8 or greater)
+1) Java (11 or greater)
 1) Maven (3.0 or greater)
 1) Docker  
 

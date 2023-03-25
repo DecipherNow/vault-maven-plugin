@@ -1,8 +1,7 @@
-package com.homeofthewizard.maven.plugins.vault;
+package com.homeofthewizard.maven.plugins.vault.config;
 
 import com.bettercloud.vault.VaultException;
-import com.homeofthewizard.maven.plugins.vault.config.AuthenticationMethodFactory;
-import com.homeofthewizard.maven.plugins.vault.config.Server;
+import com.homeofthewizard.maven.plugins.vault.GithubToken;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
@@ -11,7 +10,6 @@ import org.junit.rules.ExpectedException;
 import java.util.Map;
 
 import static java.util.List.of;
-import static org.mockito.ArgumentMatchers.any;
 
 public class TestAuthenticationMethodFactory {
 

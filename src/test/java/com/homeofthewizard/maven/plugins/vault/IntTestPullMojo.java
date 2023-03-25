@@ -38,8 +38,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 public class IntTestPullMojo {
 
@@ -128,6 +127,26 @@ public class IntTestPullMojo {
         Vaults.authenticateIfNecessary(fixture.servers, new AuthenticationMethodFactory());
         mojo.executeVaultOperation();
         assertTrue(Maps.difference(fixture.properties, mojo.project.getProperties()).areEqual());
+      } catch (MojoExecutionException exception) {
+        fail(String.format("Unexpected exception while executing: %s", exception.getMessage()));
+      } catch (VaultException exception) {
+        fail(String.format("Unexpected exception while pushing to Vault: %s", exception.getMessage()));
+      }
+    });
+  }
+
+  @Test
+  public void testDontExecuteVaultOperationIfSkipTrue() throws URISyntaxException {
+    IntTestPullMojo.Fixture.with(fixture -> {
+      PullMojo mojo = new PullMojo();
+      mojo.project = new MavenProject();
+      mojo.servers = fixture.servers;
+      mojo.skipExecution = true;
+      try {
+        Vaults.push(fixture.servers, fixture.properties);
+        Vaults.authenticateIfNecessary(fixture.servers, new AuthenticationMethodFactory());
+        mojo.executeVaultOperation();
+        assertFalse(Maps.difference(fixture.properties, mojo.project.getProperties()).areEqual());
       } catch (MojoExecutionException exception) {
         fail(String.format("Unexpected exception while executing: %s", exception.getMessage()));
       } catch (VaultException exception) {

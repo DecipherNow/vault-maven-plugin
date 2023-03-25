@@ -51,7 +51,7 @@ jobs:
             - cache-{{ .Branch }}-{{ .Revision }}
             - cache-{{ .Branch }}
             - cache
-      - run: mvn deploy -s ./settings.xml
+      - run: PGP_RINGS="$(echo ${PGP_RINGS_ENCODED} | base64 --decode)" mvn deploy -s ./settings.xml
 
   release:
     <<: *defaults

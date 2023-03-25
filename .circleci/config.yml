@@ -27,6 +27,32 @@ jobs:
           paths:
             - "~/.m2"
 
+  build:
+    <<: *defaults
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - cache-{{ .Branch }}-{{ .Revision }}
+            - cache-{{ .Branch }}
+            - cache
+      - run: mvn verify
+      - codecov/upload:
+          file: ./target/site/jacoco/jacoco.xml
+
+  deploy:
+    <<: *defaults
+    environment:
+      JAVA_HOME: /usr/lib/jvm/java-11-openjdk-amd64
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - cache-{{ .Branch }}-{{ .Revision }}
+            - cache-{{ .Branch }}
+            - cache
+      - run: mvn deploy -s ./settings.xml
+
   release:
     <<: *defaults
     environment:
@@ -49,17 +75,42 @@ workflows:
   version: 2.1
   build-and-deploy:
     jobs:
-      - hold:
-          type: approval
       - cache:
           filters:
             tags:
               only: /.*/
             branches:
               only: /.*/
-      - release:
+      - build:
           requires:
             - cache
+          filters:
+            tags:
+              only: /.*/
+            branches:
+              only: /.*/
+      - deploy:
+          requires:
+            - cache
+            - build
+          filters:
+            tags:
+              ignore: /.*/
+            branches:
+              only: develop
+      - hold:
+          type: approval
+          requires:
+            - cache
+            - build
+          filters:
+            tags:
+              ignore: /.*/
+            branches:
+              only: release
+      - release:
+          requires:
+            - hold
           filters:
             tags:
               ignore: /.*/

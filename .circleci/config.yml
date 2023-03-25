@@ -45,13 +45,31 @@ jobs:
     environment:
       JAVA_HOME: /usr/lib/jvm/java-11-openjdk-amd64
     steps:
-       - checkout
-       - restore_cache:
-           keys:
-             - cache-{{ .Branch }}-{{ .Revision }}
-             - cache-{{ .Branch }}
-             - cache
-       - run: PGP_RINGS="$(echo ${PGP_RINGS_ENCODED} | base64 --decode)" mvn deploy -s ./settings.xml
+      - checkout
+      - restore_cache:
+          keys:
+            - cache-{{ .Branch }}-{{ .Revision }}
+            - cache-{{ .Branch }}
+            - cache
+      - run: mvn deploy -s ./settings.xml
+
+  release:
+    <<: *defaults
+    environment:
+      JAVA_HOME: /usr/lib/jvm/java-11-openjdk-amd64
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - cache-{{ .Branch }}-{{ .Revision }}
+            - cache-{{ .Branch }}
+            - cache
+      - add_ssh_keys:
+          fingerprints:
+            - "d5:f2:ab:92:e3:77:03:67:52:87:a9:4d:f9:bd:ef:5b"
+      - run: |
+          PGP_RINGS="$(echo ${PGP_RINGS_ENCODED} | base64 --decode)" mvn --batch-mode release:clean release:prepare -DscmCommentPrefix="[skip ci] [maven-release-plugin]" -s ./settings.xml
+          PGP_RINGS="$(echo ${PGP_RINGS_ENCODED} | base64 --decode)" mvn release:perform -s ./settings.xml
 
 workflows:
   version: 2.1
@@ -80,3 +98,21 @@ workflows:
               ignore: /.*/
             branches:
               only: develop
+      - hold:
+          type: approval
+          requires:
+            - cache
+            - build
+          filters:
+            tags:
+              ignore: /.*/
+            branches:
+              only: release
+      - release:
+          requires:
+            - hold
+          filters:
+            tags:
+              ignore: /.*/
+            branches:
+              only: release

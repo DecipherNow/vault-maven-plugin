@@ -17,6 +17,8 @@
 package com.homeofthewizard.maven.plugins.vault;
 
 import com.bettercloud.vault.VaultException;
+import com.homeofthewizard.maven.plugins.vault.client.VaultClient;
+import com.homeofthewizard.maven.plugins.vault.config.AuthenticationMethodProvider;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -27,17 +29,20 @@ import org.apache.maven.plugins.annotations.Mojo;
 @Mojo(name = "push", defaultPhase = LifecyclePhase.VERIFY)
 public class PushMojo extends VaultMojo {
 
+  public PushMojo(){}
+
+  public PushMojo(AuthenticationMethodProvider authenticationMethodProvider, VaultClient vaultClient) {
+    super(authenticationMethodProvider, vaultClient);
+  }
+
   /**
    * Executes this Mojo which pushes a project property values to Vault.
    *
    * @throws MojoExecutionException if an exception is thrown based upon the project configuration
    */
   public void executeVaultOperation() throws MojoExecutionException {
-    if (this.skipExecution) {
-      return;
-    }
     try {
-      Vaults.push(this.servers, this.project.getProperties());
+      vaultClient.push(this.servers, this.project.getProperties());
     } catch (VaultException exception) {
       throw new MojoExecutionException("Exception thrown pushing secrets.", exception);
     }

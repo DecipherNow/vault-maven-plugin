@@ -17,6 +17,8 @@
 package com.homeofthewizard.maven.plugins.vault;
 
 import com.bettercloud.vault.VaultException;
+import com.homeofthewizard.maven.plugins.vault.client.VaultClient;
+import com.homeofthewizard.maven.plugins.vault.config.AuthenticationMethodProvider;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -26,6 +28,13 @@ import org.apache.maven.plugins.annotations.Mojo;
  */
 @Mojo(name = "pull", defaultPhase = LifecyclePhase.INITIALIZE)
 public class PullMojo extends VaultMojo {
+
+  public PullMojo(){}
+
+  public PullMojo(AuthenticationMethodProvider authenticationMethodProvider,
+                  VaultClient vaultClient) {
+      super(authenticationMethodProvider, vaultClient);
+  }
 
   /**
    * Executes this Mojo which pulls project property values from Vault.
@@ -37,7 +46,7 @@ public class PullMojo extends VaultMojo {
       return;
     }
     try {
-      Vaults.pull(this.servers, this.project.getProperties());
+      vaultClient.pull(this.servers, this.project.getProperties());
     } catch (VaultException exception) {
       throw new MojoExecutionException("Exception thrown pulling secrets.", exception);
     }

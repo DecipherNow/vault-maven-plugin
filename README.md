@@ -1,7 +1,7 @@
 
 # vault-maven-plugin
 [![CircleCI](https://dl.circleci.com/status-badge/img/gh/HomeOfTheWizard/vault-maven-plugin/tree/master.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/HomeOfTheWizard/vault-maven-plugin/tree/master)
-[![codecov](https://codecov.io/gh/HomeOfTheWizard/vault-maven-plugin/branch/master/graph/badge.svg)](https://codecov.io/gh/HomeOfTheWizard/vault-maven-plugin)
+[![codecov](https://codecov.io/gh/HomeOfTheWizard/vault-maven-plugin/branch/develop/graph/badge.svg)](https://codecov.io/gh/HomeOfTheWizard/vault-maven-plugin)
 [![Sonatype Nexus (Snapshots)](https://img.shields.io/nexus/s/com.homeofthewizard/vault-maven-plugin?label=nexus-snapshots&server=https%3A%2F%2Fs01.oss.sonatype.org)](https://s01.oss.sonatype.org/content/repositories/snapshots/com/homeofthewizard/vault-maven-plugin/)
 [![Maven Central](https://img.shields.io/maven-central/v/com.homeofthewizard/vault-maven-plugin?color=green)]()
 

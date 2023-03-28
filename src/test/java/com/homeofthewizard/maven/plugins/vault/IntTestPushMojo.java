@@ -16,29 +16,28 @@
 
 package com.homeofthewizard.maven.plugins.vault;
 
-    import com.bettercloud.vault.VaultException;
-    import com.homeofthewizard.maven.plugins.vault.config.AuthenticationMethodFactory;
-    import com.homeofthewizard.maven.plugins.vault.config.Mapping;
-    import com.homeofthewizard.maven.plugins.vault.config.Path;
-    import com.homeofthewizard.maven.plugins.vault.config.Server;
-    import com.google.common.collect.ImmutableList;
-    import com.google.common.collect.Maps;
-    import org.apache.maven.plugin.MojoExecutionException;
-    import org.apache.maven.project.MavenProject;
-    import org.junit.Test;
+import static com.homeofthewizard.maven.plugins.vault.VaultTestHelper.randomPaths;
 
-    import java.io.File;
-    import java.net.URISyntaxException;
-    import java.net.URL;
-    import java.util.List;
-    import java.util.Map;
-    import java.util.Properties;
-    import java.util.UUID;
-    import java.util.function.Consumer;
-    import java.util.stream.Collectors;
-    import java.util.stream.IntStream;
+import com.bettercloud.vault.VaultException;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Maps;
+import com.homeofthewizard.maven.plugins.vault.config.AuthenticationMethodFactory;
+import com.homeofthewizard.maven.plugins.vault.config.Path;
+import com.homeofthewizard.maven.plugins.vault.config.Server;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.project.MavenProject;
+import org.junit.Test;
 
-    import static org.junit.Assert.*;
+import java.io.File;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.UUID;
+import java.util.function.Consumer;
+
+import static org.junit.Assert.*;
 
 public class IntTestPushMojo {
 
@@ -48,22 +47,6 @@ public class IntTestPushMojo {
   private static final String VAULT_SERVER = String.format("https://%s:%s", VAULT_HOST, VAULT_PORT);
   private static final String VAULT_TOKEN = System.getProperty("vault.token");
   private static final Map<String,String> VAULT_GITHUB_AUTH = Map.of(AuthenticationMethodFactory.GITHUB_TOKEN_TAG, "token");
-
-  private static Mapping randomMapping() {
-    return new Mapping(UUID.randomUUID().toString(), UUID.randomUUID().toString());
-  }
-
-  private static List<Mapping> randomMappings(int count) {
-    return IntStream.range(0, count).mapToObj(i -> randomMapping()).collect(Collectors.toList());
-  }
-
-  private static Path randomPath(int mappingCount) {
-    return new Path(String.format("secret/%s", UUID.randomUUID().toString()), randomMappings(mappingCount));
-  }
-
-  private static List<Path> randomPaths(int pathCount, int mappingCount) {
-    return IntStream.range(0, pathCount).mapToObj(i -> randomPath(mappingCount)).collect(Collectors.toList());
-  }
 
   private static class Fixture {
 
@@ -107,9 +90,10 @@ public class IntTestPushMojo {
         mojo.project.getProperties().setProperty(key, fixture.properties.getProperty(key));
       });
       Properties properties = new Properties();
+      var client = Vaults.create();
       try {
         mojo.execute();
-        Vaults.pull(fixture.servers, properties);
+        client.pull(fixture.servers, properties);
         assertTrue(Maps.difference(fixture.properties, mojo.project.getProperties()).areEqual());
       } catch (MojoExecutionException exception) {
         fail(String.format("Unexpected exception while executing: %s", exception.getMessage()));
@@ -126,9 +110,9 @@ public class IntTestPushMojo {
             mojo.project = new MavenProject();
             mojo.servers = fixture.servers;
             mojo.skipExecution = false;
+            var client = Vaults.create();
             try {
-                Vaults.push(fixture.servers, fixture.properties);
-                Vaults.authenticateIfNecessary(fixture.servers, new AuthenticationMethodFactory());
+                client.push(fixture.servers, fixture.properties);
                 mojo.executeVaultOperation();
                 assertTrue(Maps.difference(fixture.properties, mojo.project.getProperties()).areEqual());
             } catch (MojoExecutionException exception) {
@@ -146,9 +130,9 @@ public class IntTestPushMojo {
             mojo.project = new MavenProject();
             mojo.servers = fixture.servers;
             mojo.skipExecution = true;
+            var client = Vaults.create();
             try {
-                Vaults.push(fixture.servers, fixture.properties);
-                Vaults.authenticateIfNecessary(fixture.servers, new AuthenticationMethodFactory());
+                client.push(fixture.servers, fixture.properties);
                 mojo.executeVaultOperation();
                 assertFalse(Maps.difference(fixture.properties, mojo.project.getProperties()).areEqual());
             } catch (MojoExecutionException exception) {

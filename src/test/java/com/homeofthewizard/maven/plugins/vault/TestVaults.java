@@ -23,10 +23,11 @@ public class TestVaults {
         var server = new Server("URL", null, false, null, vaultGithubToken, "NAMESPACE", List.of(), false, 1);
         var authenticationProviderMock = Mockito.mock(AuthenticationMethodFactory.class);
         var githubTokenMock = Mockito.mock(GithubToken.class);
+        var client = Vaults.create();
         when(authenticationProviderMock.fromServer(any())).thenReturn(githubTokenMock);
         doNothing().when(githubTokenMock).login();
 
-        Vaults.authenticateIfNecessary(List.of(server), authenticationProviderMock);
+        client.authenticateIfNecessary(List.of(server), authenticationProviderMock);
     }
 
     @Rule
@@ -38,8 +39,9 @@ public class TestVaults {
         exceptionRule.expectMessage("Either a Token of Authentication method must be provided !!");
 
         var server = new Server("URL", null, false, null, null, "NAMESPACE", List.of(), false, 1);
+        var client = Vaults.create();
         var authenticationProviderMock = Mockito.mock(AuthenticationMethodFactory.class);
 
-        Vaults.authenticateIfNecessary(List.of(server), authenticationProviderMock);
+        client.authenticateIfNecessary(List.of(server), authenticationProviderMock);
     }
 }

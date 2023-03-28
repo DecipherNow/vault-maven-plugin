@@ -24,6 +24,7 @@ import com.bettercloud.vault.SslConfig;
 import com.bettercloud.vault.Vault;
 import com.bettercloud.vault.VaultConfig;
 import com.bettercloud.vault.VaultException;
+import com.homeofthewizard.maven.plugins.vault.client.VaultClient;
 import com.homeofthewizard.maven.plugins.vault.config.AuthenticationMethodProvider;
 import com.homeofthewizard.maven.plugins.vault.config.Mapping;
 import com.homeofthewizard.maven.plugins.vault.config.Path;
@@ -41,7 +42,7 @@ import java.util.Properties;
 /**
  * Provides static methods for working with Vault.
  */
-public final class Vaults {
+public final class Vaults implements VaultClient {
 
   /**
    * Defines the timeout when opening a connection with Vault.
@@ -58,6 +59,10 @@ public final class Vaults {
    */
   private Vaults() {}
 
+  public static VaultClient create() {
+    return new Vaults();
+  }
+
   /**
    * Pulls secrets from one or more Vault servers and paths and updates a {@link Properties} instance with the values.
    *
@@ -65,7 +70,8 @@ public final class Vaults {
    * @param properties the properties
    * @throws VaultException if an exception is throw pulling the secrets
    */
-  public static void pull(List<Server> servers, Properties properties) throws VaultException {
+  @Override
+  public void pull(List<Server> servers, Properties properties) throws VaultException {
     for (Server server : servers) {
       if (server.isSkipExecution()) {
         continue;
@@ -92,7 +98,8 @@ public final class Vaults {
    * @param properties the properties
    * @throws VaultException if an exception is throw pushing the secrets
    */
-  public static void push(List<Server> servers, Properties properties) throws VaultException {
+  @Override
+  public void push(List<Server> servers, Properties properties) throws VaultException {
     for (Server server : servers) {
       if (server.isSkipExecution()) {
         continue;
@@ -119,7 +126,8 @@ public final class Vaults {
    * @param servers the servers
    * @throws VaultException if an exception is throw authenticating
    */
-  public static void authenticateIfNecessary(List<Server> servers, AuthenticationMethodProvider factory)
+  @Override
+  public void authenticateIfNecessary(List<Server> servers, AuthenticationMethodProvider factory)
           throws VaultException {
     for (Server s : servers) {
       if (!Strings.isNullOrEmpty(s.getToken())) {

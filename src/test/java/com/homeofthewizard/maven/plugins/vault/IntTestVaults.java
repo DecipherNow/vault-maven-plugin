@@ -16,11 +16,15 @@
 
 package com.homeofthewizard.maven.plugins.vault;
 
+import static com.homeofthewizard.maven.plugins.vault.VaultTestHelper.randomPaths;
+
 import com.bettercloud.vault.VaultException;
-import com.homeofthewizard.maven.plugins.vault.config.*;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
-import com.homeofthewizard.maven.plugins.vault.config.*;
+import com.homeofthewizard.maven.plugins.vault.config.AuthenticationMethodFactory;
+import com.homeofthewizard.maven.plugins.vault.config.AuthenticationMethodProvider;
+import com.homeofthewizard.maven.plugins.vault.config.Path;
+import com.homeofthewizard.maven.plugins.vault.config.Server;
 import org.junit.Test;
 
 import java.io.File;
@@ -31,8 +35,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -48,22 +50,6 @@ public class IntTestVaults {
   private static final String VAULT_SERVER = String.format("https://%s:%s", VAULT_HOST, VAULT_PORT);
   private static final String VAULT_TOKEN = System.getProperty("vault.token");
   private static final Map<String,String> VAULT_GITHUB_AUTH = Map.of(AuthenticationMethodFactory.GITHUB_TOKEN_TAG, "token");
-
-  private static Mapping randomMapping() {
-    return new Mapping(UUID.randomUUID().toString(), UUID.randomUUID().toString());
-  }
-
-  private static List<Mapping> randomMappings(int count) {
-    return IntStream.range(0, count).mapToObj(i -> randomMapping()).collect(Collectors.toList());
-  }
-
-  private static Path randomPath(int mappingCount) {
-    return new Path(String.format("secret/%s", UUID.randomUUID()), randomMappings(mappingCount));
-  }
-
-  private static List<Path> randomPaths(int pathCount, int mappingCount) {
-    return IntStream.range(0, pathCount).mapToObj(i -> randomPath(mappingCount)).collect(Collectors.toList());
-  }
 
   private static class Fixture {
 
@@ -102,11 +88,12 @@ public class IntTestVaults {
   @Test
   public void testPushAndPull() throws URISyntaxException {
     Fixture.with(fixture -> {
+      var client = Vaults.create();
       try {
-        Vaults.push(fixture.servers, fixture.properties);
+        client.push(fixture.servers, fixture.properties);
         Properties properties = new Properties();
         try {
-          Vaults.pull(fixture.servers, properties);
+          client.pull(fixture.servers, properties);
           assertTrue(Maps.difference(fixture.properties, properties).areEqual());
         } catch (VaultException exception) {
           fail(String.format("Unexpected exception while pulling to Vault: %s", exception.getMessage()));
@@ -125,8 +112,9 @@ public class IntTestVaults {
   @Test
   public void testAuthentication() throws URISyntaxException {
     Fixture.with(fixture -> {
+      var client = Vaults.create();
       try {
-        Vaults.authenticateIfNecessary(fixture.servers, fixture.authenticationMethodProvider);
+        client.authenticateIfNecessary(fixture.servers, fixture.authenticationMethodProvider);
       } catch (VaultException exception) {
         fail(String.format("Unexpected exception while pushing to Vault: %s", exception.getMessage()));
       }

@@ -74,7 +74,6 @@ public class TestPushMojo {
         List<Path> paths = randomPaths(10, 10);
         var authenticationMethodProvider = Mockito.mock(AuthenticationMethodProvider.class);
         var client = Mockito.mock(VaultClient.class);
-        doNothing().when(client).authenticateIfNecessary(any(),any());
         doNothing().when(client).push(any(),any());
 
         var mojo = new PushMojo(authenticationMethodProvider, client);
@@ -84,8 +83,7 @@ public class TestPushMojo {
 
         mojo.executeVaultOperation();
 
-        verify(client, times(0)).push(any(),any());
-        verify(client, times(0)).authenticateIfNecessary(any(),any());
+        verify(client, times(1)).push(any(),any());
     }
 
     @Test

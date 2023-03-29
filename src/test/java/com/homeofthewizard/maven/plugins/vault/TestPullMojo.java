@@ -75,7 +75,6 @@ public class TestPullMojo {
         List<Path> paths = randomPaths(10, 10);
         var authenticationMethodProvider = Mockito.mock(AuthenticationMethodProvider.class);
         var client = Mockito.mock(VaultClient.class);
-        doNothing().when(client).authenticateIfNecessary(any(),any());
         doNothing().when(client).pull(any(),any());
 
         var mojo = new PullMojo(authenticationMethodProvider, client);
@@ -85,8 +84,7 @@ public class TestPullMojo {
 
         mojo.executeVaultOperation();
 
-        verify(client, times(0)).pull(any(),any());
-        verify(client, times(0)).authenticateIfNecessary(any(),any());
+        verify(client, times(1)).pull(any(),any());
     }
 
     @Test

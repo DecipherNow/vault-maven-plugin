@@ -2,8 +2,7 @@ package com.homeofthewizard.maven.plugins.vault;
 
 import static com.homeofthewizard.maven.plugins.vault.VaultTestHelper.randomPaths;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import com.bettercloud.vault.VaultException;
 import com.google.common.collect.ImmutableList;
@@ -33,14 +32,41 @@ public class TestPushMojo {
     private static final Map<String,String> VAULT_GITHUB_AUTH = Map.of(AuthenticationMethodFactory.GITHUB_TOKEN_TAG, "token");
 
     @Test
-    public void testPushSkip() throws MojoExecutionException, URISyntaxException {
+    public void testPushSkip() throws MojoExecutionException, URISyntaxException, VaultException {
         List<Path> paths = randomPaths(10, 10);
-        var mojo = new PushMojo();
+        var authenticationMethodProvider = Mockito.mock(AuthenticationMethodProvider.class);
+        var client = Mockito.mock(VaultClient.class);
+        doNothing().when(client).authenticateIfNecessary(any(),any());
+        doNothing().when(client).push(any(),any());
+
+        var mojo = new PushMojo(authenticationMethodProvider, client);
         mojo.project = new MavenProject();
         mojo.servers = ImmutableList.of(new Server(VAULT_SERVER, VAULT_TOKEN, true, new File(VAULT_CERTIFICATE.toURI()), VAULT_GITHUB_AUTH, "", paths, false, 2));
         mojo.skipExecution = true;
 
         mojo.execute();
+
+        verify(client, times(0)).push(any(),any());
+        verify(client, times(0)).authenticateIfNecessary(any(),any());
+    }
+
+    @Test
+    public void testExecute() throws MojoExecutionException, URISyntaxException, VaultException {
+        List<Path> paths = randomPaths(10, 10);
+        var authenticationMethodProvider = Mockito.mock(AuthenticationMethodProvider.class);
+        var client = Mockito.mock(VaultClient.class);
+        doNothing().when(client).authenticateIfNecessary(any(),any());
+        doNothing().when(client).push(any(),any());
+
+        var mojo = new PushMojo(authenticationMethodProvider, client);
+        mojo.project = new MavenProject();
+        mojo.servers = ImmutableList.of(new Server(VAULT_SERVER, VAULT_TOKEN, true, new File(VAULT_CERTIFICATE.toURI()), VAULT_GITHUB_AUTH, "", paths, false, 2));
+        mojo.skipExecution = false;
+
+        mojo.execute();
+
+        verify(client, times(1)).push(any(),any());
+        verify(client, times(1)).authenticateIfNecessary(any(),any());
     }
 
     @Test
@@ -54,8 +80,32 @@ public class TestPushMojo {
         var mojo = new PushMojo(authenticationMethodProvider, client);
         mojo.project = new MavenProject();
         mojo.servers = ImmutableList.of(new Server(VAULT_SERVER, VAULT_TOKEN, true, new File(VAULT_CERTIFICATE.toURI()), VAULT_GITHUB_AUTH, "", paths, false, 2));
-        mojo.skipExecution = true;
+        mojo.skipExecution = false;
 
-        mojo.execute();
+        mojo.executeVaultOperation();
+
+        verify(client, times(0)).push(any(),any());
+        verify(client, times(0)).authenticateIfNecessary(any(),any());
+    }
+
+    @Test
+    public void testNotPushIfAuthenticationFails() throws MojoExecutionException, URISyntaxException, VaultException {
+        List<Path> paths = randomPaths(10, 10);
+        var authenticationMethodProvider = Mockito.mock(AuthenticationMethodProvider.class);
+        var client = Mockito.mock(VaultClient.class);
+        doThrow(VaultException.class).when(client).authenticateIfNecessary(any(),any());
+        doNothing().when(client).push(any(),any());
+
+        var mojo = new PushMojo(authenticationMethodProvider, client);
+        mojo.project = new MavenProject();
+        mojo.servers = ImmutableList.of(new Server(VAULT_SERVER, VAULT_TOKEN, true, new File(VAULT_CERTIFICATE.toURI()), VAULT_GITHUB_AUTH, "", paths, false, 2));
+        mojo.skipExecution = false;
+
+        try {
+            mojo.execute();
+        }catch (MojoExecutionException ex){}
+
+        verify(client, times(1)).authenticateIfNecessary(any(),any());
+        verify(client, times(0)).push(any(),any());
     }
 }

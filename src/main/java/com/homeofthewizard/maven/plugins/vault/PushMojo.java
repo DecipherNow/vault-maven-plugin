@@ -40,7 +40,11 @@ public class PushMojo extends VaultMojo {
    *
    * @throws MojoExecutionException if an exception is thrown based upon the project configuration
    */
-  public void executeVaultOperation() throws MojoExecutionException {
+  @Override
+  void executeVaultOperation() throws MojoExecutionException {
+    if (this.skipExecution) {
+      return;
+    }
     try {
       vaultClient.push(this.servers, this.project.getProperties());
     } catch (VaultException exception) {

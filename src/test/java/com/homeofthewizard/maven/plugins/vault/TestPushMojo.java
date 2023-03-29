@@ -32,7 +32,7 @@ public class TestPushMojo {
     private static final Map<String,String> VAULT_GITHUB_AUTH = Map.of(AuthenticationMethodFactory.GITHUB_TOKEN_TAG, "token");
 
     @Test
-    public void testPushSkip() throws MojoExecutionException, URISyntaxException, VaultException {
+    public void testExcecuteSkip() throws MojoExecutionException, URISyntaxException, VaultException {
         List<Path> paths = randomPaths(10, 10);
         var authenticationMethodProvider = Mockito.mock(AuthenticationMethodProvider.class);
         var client = Mockito.mock(VaultClient.class);
@@ -84,6 +84,23 @@ public class TestPushMojo {
         mojo.executeVaultOperation();
 
         verify(client, times(1)).push(any(),any());
+    }
+
+    @Test
+    public void testPushSkip() throws MojoExecutionException, URISyntaxException, VaultException {
+        List<Path> paths = randomPaths(10, 10);
+        var authenticationMethodProvider = Mockito.mock(AuthenticationMethodProvider.class);
+        var client = Mockito.mock(VaultClient.class);
+        doNothing().when(client).push(any(),any());
+
+        var mojo = new PushMojo(authenticationMethodProvider, client);
+        mojo.project = new MavenProject();
+        mojo.servers = ImmutableList.of(new Server(VAULT_SERVER, VAULT_TOKEN, true, new File(VAULT_CERTIFICATE.toURI()), VAULT_GITHUB_AUTH, "", paths, false, 2));
+        mojo.skipExecution = true;
+
+        mojo.executeVaultOperation();
+
+        verify(client, times(0)).push(any(),any());
     }
 
     @Test

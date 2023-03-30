@@ -4,7 +4,7 @@ import com.bettercloud.vault.VaultException;
 import com.bettercloud.vault.api.Auth;
 import com.homeofthewizard.maven.plugins.vault.AuthenticationMethod;
 import com.homeofthewizard.maven.plugins.vault.GithubToken;
-import com.homeofthewizard.maven.plugins.vault.Vaults;
+import com.homeofthewizard.maven.plugins.vault.client.VaultBackendProvider;
 
 import java.util.List;
 
@@ -12,6 +12,8 @@ public final class AuthenticationMethodFactory implements AuthenticationMethodPr
 
   public static final String GITHUB_TOKEN_TAG = "githubToken";
   public static final List<String> methods = List.of(GITHUB_TOKEN_TAG);
+
+  private final VaultBackendProvider vaultBackendProvider = new VaultBackendProvider();
 
   /**
    * Factory method that helps creating the authentication config.
@@ -27,7 +29,7 @@ public final class AuthenticationMethodFactory implements AuthenticationMethodPr
   }
 
   private AuthenticationMethod fromMethodName(String method, Server server) throws VaultException {
-    var vaultConfig = Vaults.vaultConfig(
+    var vaultConfig = vaultBackendProvider.vaultConfig(
             server.getUrl(),
             server.getToken(),
             server.getNamespace(),

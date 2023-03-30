@@ -17,6 +17,7 @@
 package com.homeofthewizard.maven.plugins.vault;
 
 import com.bettercloud.vault.VaultException;
+import com.homeofthewizard.maven.plugins.vault.client.VaultBackendProvider;
 import com.homeofthewizard.maven.plugins.vault.client.VaultClient;
 import com.homeofthewizard.maven.plugins.vault.config.AuthenticationMethodFactory;
 import com.homeofthewizard.maven.plugins.vault.config.AuthenticationMethodProvider;
@@ -48,7 +49,8 @@ abstract class VaultMojo extends AbstractMojo {
 
   VaultMojo() {
     this.authenticationMethodProvider = new AuthenticationMethodFactory();
-    this.vaultClient = Vaults.create();
+    var vaultBackendProvider = new VaultBackendProvider();
+    this.vaultClient = Vaults.createForBackend(vaultBackendProvider);
   }
 
   VaultMojo(AuthenticationMethodProvider authenticationMethodProvider,

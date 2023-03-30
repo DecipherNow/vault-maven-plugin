@@ -13,7 +13,10 @@ import com.homeofthewizard.maven.plugins.vault.config.Path;
 import com.homeofthewizard.maven.plugins.vault.config.Server;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
+import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.mockito.Mockito;
 
 import java.io.File;
@@ -105,6 +108,7 @@ public class TestPushMojo {
 
     @Test
     public void testNotPushIfAuthenticationFails() throws MojoExecutionException, URISyntaxException, VaultException {
+        exceptionRule.expect(MojoExecutionException.class);
         List<Path> paths = randomPaths(10, 10);
         var authenticationMethodProvider = Mockito.mock(AuthenticationMethodProvider.class);
         var client = Mockito.mock(VaultClient.class);
@@ -116,11 +120,29 @@ public class TestPushMojo {
         mojo.servers = ImmutableList.of(new Server(VAULT_SERVER, VAULT_TOKEN, true, new File(VAULT_CERTIFICATE.toURI()), VAULT_GITHUB_AUTH, "", paths, false, 2));
         mojo.skipExecution = false;
 
-        try {
-            mojo.execute();
-        }catch (MojoExecutionException ex){}
+        mojo.execute();
 
         verify(client, times(1)).authenticateIfNecessary(any(),any());
         verify(client, times(0)).push(any(),any());
+    }
+
+    @Rule
+    public ExpectedException exceptionRule = ExpectedException.none();
+
+    @Test
+    public void testPushFails() throws URISyntaxException, VaultException, MojoExecutionException {
+        exceptionRule.expect(MojoExecutionException.class);
+        exceptionRule.expectMessage("Exception thrown pushing secrets.");
+        List<Path> paths = randomPaths(10, 10);
+        var authenticationMethodProvider = Mockito.mock(AuthenticationMethodProvider.class);
+        var client = Mockito.mock(VaultClient.class);
+        doThrow(VaultException.class).when(client).push(any(),any());
+
+        var mojo = new PushMojo(authenticationMethodProvider, client);
+        mojo.project = new MavenProject();
+        mojo.servers = ImmutableList.of(new Server(VAULT_SERVER, VAULT_TOKEN, true, new File(VAULT_CERTIFICATE.toURI()), VAULT_GITHUB_AUTH, "", paths, false, 2));
+        mojo.skipExecution = false;
+
+        mojo.executeVaultOperation();
     }
 }

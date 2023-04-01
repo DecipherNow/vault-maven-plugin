@@ -17,7 +17,7 @@
 package com.homeofthewizard.maven.plugins.vault.config;
 
 import com.google.common.testing.EqualsTester;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

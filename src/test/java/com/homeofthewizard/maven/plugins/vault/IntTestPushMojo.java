@@ -26,7 +26,7 @@ import com.homeofthewizard.maven.plugins.vault.config.Path;
 import com.homeofthewizard.maven.plugins.vault.config.Server;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.net.URISyntaxException;

@@ -62,18 +62,18 @@
         <version.java.target>11</version.java.target>
         <version.docker.plugin>0.38.0</version.docker.plugin>
         <version.failsafe.plugin>${version.surefire.plugin}</version.failsafe.plugin>
-        <version.freemarker>2.3.23</version.freemarker>
+        <version.freemarker>2.3.30</version.freemarker>
         <version.guava>31.0.1-jre</version.guava>
         <version.jacoco>0.8.7</version.jacoco>
         <version.jacoco.plugin>${version.jacoco}</version.jacoco.plugin>
         <version.javadoc.plugin>3.2.0</version.javadoc.plugin>
         <version.junit>4.13.2</version.junit>
-        <version.maven>3.8.1</version.maven>
+        <version.maven>3.9.1</version.maven>
         <version.moby>1.0.0</version.moby>
         <version.nginx>1.11</version.nginx>
         <version.plugin.api>3.8.1</version.plugin.api>
         <version.plugin.annotations>3.6.2</version.plugin.annotations>
-        <version.plugin.testing>3.3.0</version.plugin.testing>
+        <version.plugin.testing>4.0.0-alpha-1</version.plugin.testing>
         <version.plugin.plugin>3.6.2</version.plugin.plugin>
         <version.source.plugin>3.0.1</version.source.plugin>
         <version.surefire.plugin>2.22.0</version.surefire.plugin>
@@ -82,6 +82,7 @@
         <mockito-core.version>5.2.0</mockito-core.version>
         <nexus-staging-maven-plugin.version>1.6.13</nexus-staging-maven-plugin.version>
         <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
+        <junit-jupiter.version>5.9.2</junit-jupiter.version>
     </properties>
 
     <dependencies>
@@ -108,9 +109,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>${version.junit}</version>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${junit-jupiter.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

@@ -6,7 +6,7 @@ import com.bettercloud.vault.response.AuthResponse;
 import com.homeofthewizard.maven.plugins.vault.config.AuthenticationMethodFactory;
 import com.homeofthewizard.maven.plugins.vault.config.Server;
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.Map;

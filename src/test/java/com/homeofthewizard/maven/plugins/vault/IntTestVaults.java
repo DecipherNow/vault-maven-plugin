@@ -25,7 +25,7 @@ import com.homeofthewizard.maven.plugins.vault.config.AuthenticationMethodFactor
 import com.homeofthewizard.maven.plugins.vault.config.AuthenticationMethodProvider;
 import com.homeofthewizard.maven.plugins.vault.config.Path;
 import com.homeofthewizard.maven.plugins.vault.config.Server;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.net.URISyntaxException;

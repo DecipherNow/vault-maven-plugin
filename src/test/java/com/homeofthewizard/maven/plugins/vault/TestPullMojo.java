@@ -9,8 +9,8 @@ import com.homeofthewizard.maven.plugins.vault.config.Path;
 import com.homeofthewizard.maven.plugins.vault.config.Server;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.Mockito;
 
@@ -108,7 +108,6 @@ public class TestPullMojo {
 
     @Test
     public void testNotPullIfAuthenticationFails() throws MojoExecutionException, URISyntaxException, VaultException {
-        exceptionRule.expect(MojoExecutionException.class);
         List<Path> paths = randomPaths(10, 10);
         var authenticationMethodProvider = Mockito.mock(AuthenticationMethodProvider.class);
         var client = Mockito.mock(VaultClient.class);
@@ -120,19 +119,13 @@ public class TestPullMojo {
         mojo.servers = ImmutableList.of(new Server(VAULT_SERVER, VAULT_TOKEN, true, new File(VAULT_CERTIFICATE.toURI()), VAULT_GITHUB_AUTH, "", paths, false, 2));
         mojo.skipExecution = false;
 
-        mojo.execute();
-
+        Assertions.assertThrows(MojoExecutionException.class, ()-> mojo.execute());
         verify(client, times(1)).authenticateIfNecessary(any(),any());
         verify(client, times(0)).pull(any(),any());
     }
 
-    @Rule
-    public ExpectedException exceptionRule = ExpectedException.none();
-
     @Test
     public void testPullFails() throws URISyntaxException, VaultException, MojoExecutionException {
-        exceptionRule.expect(MojoExecutionException.class);
-        exceptionRule.expectMessage("Exception thrown pulling secrets.");
         List<Path> paths = randomPaths(10, 10);
         var authenticationMethodProvider = Mockito.mock(AuthenticationMethodProvider.class);
         var client = Mockito.mock(VaultClient.class);
@@ -143,7 +136,8 @@ public class TestPullMojo {
         mojo.servers = ImmutableList.of(new Server(VAULT_SERVER, VAULT_TOKEN, true, new File(VAULT_CERTIFICATE.toURI()), VAULT_GITHUB_AUTH, "", paths, false, 2));
         mojo.skipExecution = false;
 
-        mojo.executeVaultOperation();
+        var ex = Assertions.assertThrows(MojoExecutionException.class, ()->mojo.executeVaultOperation());
+        Assertions.assertTrue(ex.getMessage().contains("Exception thrown pulling secrets."));
     }
 }
 

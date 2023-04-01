@@ -8,9 +8,8 @@ import com.homeofthewizard.maven.plugins.vault.client.VaultBackendProvider;
 import com.homeofthewizard.maven.plugins.vault.config.AuthenticationMethodFactory;
 import com.homeofthewizard.maven.plugins.vault.config.Path;
 import com.homeofthewizard.maven.plugins.vault.config.Server;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.List;
@@ -36,18 +35,16 @@ public class TestVaults {
         vaultClient.authenticateIfNecessary(List.of(server), authenticationProviderMock);
     }
 
-    @Rule
-    public ExpectedException exceptionRule = ExpectedException.none();
-
     @Test
-    public void testAuthenticationIfNecessaryWithoutMethod() throws VaultException {
-        exceptionRule.expect(VaultException.class);
-        exceptionRule.expectMessage("Either a Token of Authentication method must be provided !!");
-
+    public void testAuthenticationIfNecessaryWithoutMethod() {
         var server = new Server("URL", null, false, null, null, "NAMESPACE", List.of(), false, 1);
         var vaultClient = Vaults.create();
 
-        vaultClient.authenticateIfNecessary(List.of(server), null);
+        VaultException ex = Assertions.assertThrows(
+                VaultException.class,
+                ()-> vaultClient.authenticateIfNecessary(List.of(server), null)
+        );
+        Assertions.assertTrue(ex.getMessage().contains("Either a Token of Authentication method must be provided !!"));
     }
 
     @Test
@@ -105,7 +102,7 @@ public class TestVaults {
         List<Path> paths = randomPaths(10, 10);
         var server = new Server("URL", null, false, null, null, "NAMESPACE", paths, false, 1);
         var vaultBackendProviderMock = Mockito.mock(VaultBackendProvider.class);
-        var vaultMock = getVaultMock(paths);
+        var vaultMock = createVaultMock(paths);
         when(vaultBackendProviderMock.vault(any(),any(),any(),anyBoolean(),any(),any())).thenReturn(vaultMock);
         var vaultClient = Vaults.createForBackend(vaultBackendProviderMock);
 
@@ -114,7 +111,24 @@ public class TestVaults {
         verify(vaultBackendProviderMock, times(1)).vault(any(),any(),any(),anyBoolean(),any(),any());
     }
 
-    private static Vault getVaultMock(List<Path> paths) throws VaultException {
+    @Test
+    public void testPush() throws VaultException {
+        List<Path> paths = randomPaths(10, 10);
+        var server = new Server("URL", null, false, null, null, "NAMESPACE", paths, false, 1);
+        var vaultBackendProviderMock = Mockito.mock(VaultBackendProvider.class);
+        var propertyMap = propertiesFromPaths(paths);
+        var vaultMock = createVaultMock(paths);
+        when(vaultBackendProviderMock.vault(any(),any(),any(),anyBoolean(),any(),any())).thenReturn(vaultMock);
+        var vaultClient = Vaults.createForBackend(vaultBackendProviderMock);
+        var properties = new Properties();
+        properties.putAll(propertyMap);
+
+        vaultClient.push(List.of(server), properties);
+
+        verify(vaultBackendProviderMock, times(1)).vault(any(),any(),any(),anyBoolean(),any(),any());
+    }
+
+    private static Vault createVaultMock(List<Path> paths) throws VaultException {
         var vaultMock = Mockito.mock(Vault.class);
         var logicalMock = Mockito.mock(Logical.class);
         var logicalResponseMock = Mockito.mock(LogicalResponse.class);
@@ -124,22 +138,5 @@ public class TestVaults {
         when(logicalMock.write(any(),any())).thenReturn(logicalResponseMock);
         when(vaultMock.logical()).thenReturn(logicalMock);
         return vaultMock;
-    }
-
-    @Test
-    public void testPush() throws VaultException {
-        List<Path> paths = randomPaths(10, 10);
-        var server = new Server("URL", null, false, null, null, "NAMESPACE", paths, false, 1);
-        var vaultBackendProviderMock = Mockito.mock(VaultBackendProvider.class);
-        var propertyMap = propertiesFromPaths(paths);
-        var vaultMock = getVaultMock(paths);
-        when(vaultBackendProviderMock.vault(any(),any(),any(),anyBoolean(),any(),any())).thenReturn(vaultMock);
-        var vaultClient = Vaults.createForBackend(vaultBackendProviderMock);
-        var properties = new Properties();
-        properties.putAll(propertyMap);
-
-        vaultClient.push(List.of(server), properties);
-
-        verify(vaultBackendProviderMock, times(1)).vault(any(),any(),any(),anyBoolean(),any(),any());
     }
 }

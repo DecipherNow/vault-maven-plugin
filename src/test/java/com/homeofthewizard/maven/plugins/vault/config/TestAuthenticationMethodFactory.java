@@ -3,9 +3,8 @@ package com.homeofthewizard.maven.plugins.vault.config;
 import com.bettercloud.vault.VaultException;
 import com.homeofthewizard.maven.plugins.vault.GithubToken;
 import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 
@@ -24,30 +23,24 @@ public class TestAuthenticationMethodFactory {
         Assert.assertTrue(method instanceof GithubToken);
     }
 
-    @Rule
-    public ExpectedException exceptionRule = ExpectedException.none();
-
     @Test
     public void testAuthenticationIfNecessaryUnrecognizedMethod() throws VaultException {
-        exceptionRule.expect(VaultException.class);
-        exceptionRule.expectMessage("available authentication methods are:");
-
         var vaultGithubToken = Map.of("UNRECOGNIZED_AUTH_METHOD", "UNRECOGNIZED_TOKEN");
         var server = new Server("URL", null, false, null, vaultGithubToken, "NAMESPACE", of(), false, 1);
         var authenticationMethodFactory = new AuthenticationMethodFactory();
 
-        authenticationMethodFactory.fromServer(server);
+        var ex = Assertions.assertThrows(VaultException.class, ()-> authenticationMethodFactory.fromServer(server));
+        Assertions.assertTrue(ex.getMessage().contains("available authentication methods are:"));
+
     }
 
     @Test
     public void testAuthenticationIfNecessaryWithoutMethod() throws VaultException {
-        exceptionRule.expect(VaultException.class);
-        exceptionRule.expectMessage("cannot login to vault server without authentication info");
-
         var vaultGithubToken = Map.<String,String>of();
         var server = new Server("URL", null, false, null, vaultGithubToken, "NAMESPACE", of(), false, 1);
         var authenticationMethodFactory = new AuthenticationMethodFactory();
 
-        authenticationMethodFactory.fromServer(server);
+        var ex = Assertions.assertThrows(VaultException.class, ()->authenticationMethodFactory.fromServer(server));
+        Assertions.assertTrue(ex.getMessage().contains("cannot login to vault server without authentication info"));
     }
 }

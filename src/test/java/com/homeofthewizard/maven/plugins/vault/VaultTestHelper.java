@@ -5,7 +5,6 @@ import com.homeofthewizard.maven.plugins.vault.config.Path;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;

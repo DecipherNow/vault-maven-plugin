@@ -77,7 +77,7 @@
         <version.plugin.plugin>3.6.2</version.plugin.plugin>
         <version.source.plugin>3.0.1</version.source.plugin>
         <version.surefire.plugin>2.22.0</version.surefire.plugin>
-        <version.vault>latest</version.vault>
+        <version.vault>1.13.3</version.vault>
         <version.vault.driver>5.1.0</version.vault.driver>
         <mockito-core.version>5.2.0</mockito-core.version>
         <nexus-staging-maven-plugin.version>1.6.13</nexus-staging-maven-plugin.version>

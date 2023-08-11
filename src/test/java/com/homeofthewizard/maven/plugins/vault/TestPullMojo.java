@@ -7,11 +7,11 @@ import com.homeofthewizard.maven.plugins.vault.config.AuthenticationMethodFactor
 import com.homeofthewizard.maven.plugins.vault.config.AuthenticationMethodProvider;
 import com.homeofthewizard.maven.plugins.vault.config.Path;
 import com.homeofthewizard.maven.plugins.vault.config.Server;
+import com.homeofthewizard.maven.plugins.vault.config.GithubToken;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.ExpectedException;
 import org.mockito.Mockito;
 
 import java.io.File;
@@ -19,6 +19,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import static com.homeofthewizard.maven.plugins.vault.VaultTestHelper.randomPaths;
 import static org.mockito.ArgumentMatchers.any;
@@ -32,8 +33,13 @@ public class TestPullMojo {
     private static final String VAULT_PORT = System.getProperty("vault.port", "443");
     private static final String VAULT_SERVER = String.format("https://%s:%s", VAULT_HOST, VAULT_PORT);
     private static final String VAULT_TOKEN = System.getProperty("vault.token");
-    private static final Map<String,String> VAULT_GITHUB_AUTH = Map.of(AuthenticationMethodFactory.GITHUB_TOKEN_TAG, "token");
-
+    private static String githubTokenTag = GithubToken.class.getDeclaredFields()[0].getName();
+    private static TreeMap map;
+    static {
+        map = new TreeMap<>();
+        map.put(githubTokenTag,"token");
+    }
+    private static final Map<String, TreeMap> VAULT_GITHUB_AUTH = Map.of(AuthenticationMethodFactory.GITHUB_TOKEN_TAG, map);
     @Test
     public void testExcecuteSkip() throws MojoExecutionException, URISyntaxException, VaultException {
         List<Path> paths = randomPaths(10, 10);

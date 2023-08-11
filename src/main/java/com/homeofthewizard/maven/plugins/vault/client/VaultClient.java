@@ -7,10 +7,23 @@ import com.homeofthewizard.maven.plugins.vault.config.Server;
 import java.util.List;
 import java.util.Properties;
 
+/**
+ * Interface for classes that provides methods to interact with a Vault server.
+ * Provides static methods to give hidden implementations of a VaultClient.
+ */
 public interface VaultClient {
-  public void pull(List<Server> servers, Properties properties) throws VaultException;
 
-  public void push(List<Server> servers, Properties properties) throws VaultException;
+  static VaultClient createForBackend(VaultBackendProvider vaultBackendProvider) {
+    return new Vaults(vaultBackendProvider);
+  }
 
-  public void authenticateIfNecessary(List<Server> servers, AuthenticationMethodProvider factory) throws VaultException;
+  static VaultClient create() {
+    return new Vaults(new VaultBackendProvider());
+  }
+
+  void pull(List<Server> servers, Properties properties) throws VaultException;
+
+  void push(List<Server> servers, Properties properties) throws VaultException;
+
+  void authenticateIfNecessary(List<Server> servers, AuthenticationMethodProvider factory) throws VaultException;
 }

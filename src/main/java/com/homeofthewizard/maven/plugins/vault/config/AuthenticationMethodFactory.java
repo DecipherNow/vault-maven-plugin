@@ -2,21 +2,24 @@ package com.homeofthewizard.maven.plugins.vault.config;
 
 import com.bettercloud.vault.VaultException;
 import com.bettercloud.vault.api.Auth;
-import com.homeofthewizard.maven.plugins.vault.AuthenticationMethod;
-import com.homeofthewizard.maven.plugins.vault.GithubToken;
 import com.homeofthewizard.maven.plugins.vault.client.VaultBackendProvider;
 
 import java.util.List;
 
+/**
+ * A class that provides methods to get the authentication methods from the server config.
+ */
 public final class AuthenticationMethodFactory implements AuthenticationMethodProvider{
 
   public static final String GITHUB_TOKEN_TAG = "githubToken";
-  public static final List<String> methods = List.of(GITHUB_TOKEN_TAG);
+  public static final String APP_ROLE_TAG = "appRole";
+
+  public static final List<String> methods = List.of(GITHUB_TOKEN_TAG, APP_ROLE_TAG);
 
   private final VaultBackendProvider vaultBackendProvider = new VaultBackendProvider();
 
   /**
-   * Factory method that helps creating the authentication config.
+   * Factory method that helps to create the authentication config.
    * @param server server
    * @return AuthenticationMethod subclass
    */
@@ -37,10 +40,11 @@ public final class AuthenticationMethodFactory implements AuthenticationMethodPr
             server.getSslCertificate(),
             server.getEngineVersion());
     var auth = new Auth(vaultConfig);
-    if (method.equals(GITHUB_TOKEN_TAG)) {
-      return new GithubToken(auth, server);
-    } else {
-      throw new VaultException("available authentication methods are: " + methods);
+
+    switch (method) {
+      case GITHUB_TOKEN_TAG: return new GithubTokenAuthMethod(auth, server);
+      case APP_ROLE_TAG: return new AppRoleAuthMethod(auth, server);
+      default: throw new VaultException("available authentication methods are: " + methods);
     }
   }
 

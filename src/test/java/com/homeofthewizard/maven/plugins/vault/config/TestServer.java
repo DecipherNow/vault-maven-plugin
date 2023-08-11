@@ -20,10 +20,7 @@ import com.google.common.testing.EqualsTester;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -44,7 +41,13 @@ public class TestServer {
 
   private static final String NAMESPACE = "";
   private static final String URL = UUID.randomUUID().toString();
-  private static final Map<String,String> VAULT_GITHUB_AUTH = Map.of(AuthenticationMethodFactory.GITHUB_TOKEN_TAG, "token");
+  private static String githubTokenTag = GithubToken.class.getDeclaredFields()[0].getName();
+  private static TreeMap map;
+  static {
+    map = new TreeMap<>();
+    map.put(githubTokenTag,"token");
+  }
+  private static final Map<String, TreeMap> VAULT_GITHUB_AUTH = Map.of(AuthenticationMethodFactory.GITHUB_TOKEN_TAG, map);
   private static final Server INSTANCE = new Server(URL, TOKEN, SSL_VERIFY, SSL_CERTIFICATE, VAULT_GITHUB_AUTH, NAMESPACE, PATHS, SKIP_EXECUTION, 1);
 
   private static Path randomPath(int mappingCount) {

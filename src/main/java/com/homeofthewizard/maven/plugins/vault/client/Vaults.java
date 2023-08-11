@@ -1,20 +1,4 @@
-/*
- * Copyright 2017 Decipher Technology Studios LLC
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-package com.homeofthewizard.maven.plugins.vault;
+package com.homeofthewizard.maven.plugins.vault.client;
 
 import static com.homeofthewizard.maven.plugins.vault.config.AuthenticationMethodFactory.methods;
 
@@ -22,8 +6,6 @@ import com.google.common.base.Strings;
 
 import com.bettercloud.vault.Vault;
 import com.bettercloud.vault.VaultException;
-import com.homeofthewizard.maven.plugins.vault.client.VaultBackendProvider;
-import com.homeofthewizard.maven.plugins.vault.client.VaultClient;
 import com.homeofthewizard.maven.plugins.vault.config.AuthenticationMethodProvider;
 import com.homeofthewizard.maven.plugins.vault.config.Mapping;
 import com.homeofthewizard.maven.plugins.vault.config.Path;
@@ -37,26 +19,18 @@ import java.util.Objects;
 import java.util.Properties;
 
 /**
- * Provides static methods for working with Vault.
+ * Provides implementations of operations from {@link VaultClient} to interact with a Vault Server.
+ * Includes static methods for working {@link Vault}.
  */
-public final class Vaults implements VaultClient {
+final class Vaults implements VaultClient {
 
   private final VaultBackendProvider vaultBackendProvider;
-
 
   /**
    * Initializes a new instance of the {@link Vaults} class.
    */
-  private Vaults(VaultBackendProvider vaultBackendProvider) {
+  Vaults(VaultBackendProvider vaultBackendProvider) {
     this.vaultBackendProvider = vaultBackendProvider;
-  }
-
-  public static VaultClient createForBackend(VaultBackendProvider vaultBackendProvider) {
-    return new Vaults(vaultBackendProvider);
-  }
-
-  public static VaultClient create() {
-    return new Vaults(new VaultBackendProvider());
   }
 
   /**

@@ -1,9 +1,11 @@
 package com.homeofthewizard.maven.plugins.vault.config;
 
 import com.bettercloud.vault.VaultException;
-import com.homeofthewizard.maven.plugins.vault.AuthenticationMethod;
 
+/**
+ * Interface providing methods to get the authentication method from the server config.
+ */
 public interface AuthenticationMethodProvider {
 
-  public AuthenticationMethod fromServer(Server server) throws VaultException;
+  AuthenticationMethod fromServer(Server server) throws VaultException;
 }

@@ -16,12 +16,12 @@
 
 package com.homeofthewizard.maven.plugins.vault;
 
-import static com.homeofthewizard.maven.plugins.vault.VaultTestHelper.randomPaths;
-
 import com.bettercloud.vault.VaultException;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
+import com.homeofthewizard.maven.plugins.vault.client.VaultClient;
 import com.homeofthewizard.maven.plugins.vault.config.AuthenticationMethodFactory;
+import com.homeofthewizard.maven.plugins.vault.config.GithubToken;
 import com.homeofthewizard.maven.plugins.vault.config.Path;
 import com.homeofthewizard.maven.plugins.vault.config.Server;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -31,12 +31,10 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Consumer;
 
+import static com.homeofthewizard.maven.plugins.vault.VaultTestHelper.randomPaths;
 import static org.junit.Assert.*;
 
 public class IntTestPullMojo {
@@ -46,8 +44,13 @@ public class IntTestPullMojo {
   private static final String VAULT_PORT = System.getProperty("vault.port", "443");
   private static final String VAULT_SERVER = String.format("https://%s:%s", VAULT_HOST, VAULT_PORT);
   private static final String VAULT_TOKEN = System.getProperty("vault.token");
-  private static final Map<String,String> VAULT_GITHUB_AUTH = Map.of(AuthenticationMethodFactory.GITHUB_TOKEN_TAG, "token");
-
+  private static String githubTokenTag = GithubToken.class.getDeclaredFields()[0].getName();
+  private static TreeMap map;
+  static {
+    map = new TreeMap<>();
+    map.put(githubTokenTag,"token");
+  }
+  private static final Map<String, TreeMap> VAULT_GITHUB_AUTH = Map.of(AuthenticationMethodFactory.GITHUB_TOKEN_TAG, map);
   private static class Fixture {
 
     private final List<Server> servers;
@@ -86,7 +89,7 @@ public class IntTestPullMojo {
       mojo.project = new MavenProject();
       mojo.servers = fixture.servers;
       mojo.skipExecution = false;
-      var client = Vaults.create();
+      var client = VaultClient.create();
       try {
         client.push(fixture.servers, fixture.properties);
         mojo.execute();
@@ -106,7 +109,7 @@ public class IntTestPullMojo {
       mojo.project = new MavenProject();
       mojo.servers = fixture.servers;
       mojo.skipExecution = false;
-      var client = Vaults.create();
+      var client = VaultClient.create();
       try {
         client.push(fixture.servers, fixture.properties);
         mojo.executeVaultOperation();
@@ -126,7 +129,7 @@ public class IntTestPullMojo {
       mojo.project = new MavenProject();
       mojo.servers = fixture.servers;
       mojo.skipExecution = true;
-      var client = Vaults.create();
+      var client = VaultClient.create();
       try {
         client.push(fixture.servers, fixture.properties);
         mojo.executeVaultOperation();

@@ -1,13 +1,10 @@
-package com.homeofthewizard.maven.plugins.vault;
+package com.homeofthewizard.maven.plugins.vault.client;
 
 import com.bettercloud.vault.Vault;
 import com.bettercloud.vault.VaultException;
 import com.bettercloud.vault.api.Logical;
 import com.bettercloud.vault.response.LogicalResponse;
-import com.homeofthewizard.maven.plugins.vault.client.VaultBackendProvider;
-import com.homeofthewizard.maven.plugins.vault.config.AuthenticationMethodFactory;
-import com.homeofthewizard.maven.plugins.vault.config.Path;
-import com.homeofthewizard.maven.plugins.vault.config.Server;
+import com.homeofthewizard.maven.plugins.vault.config.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -15,6 +12,7 @@ import org.mockito.Mockito;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.TreeMap;
 
 import static com.homeofthewizard.maven.plugins.vault.VaultTestHelper.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -23,14 +21,19 @@ import static org.mockito.Mockito.*;
 public class TestVaults {
 
     @Test
-    public void testAuthenticationIfNecessaryWithGithub() throws VaultException {
-        var vaultGithubToken = Map.of(AuthenticationMethodFactory.GITHUB_TOKEN_TAG, "token");
+    public void testAuthenticationIfNecessaryWithMethod() throws VaultException {
+        var githubTokenTag = GithubToken.class.getDeclaredFields()[0].getName();
+        TreeMap map = new TreeMap<>();
+        map.put(githubTokenTag,"token");
+        Map<String, TreeMap> vaultGithubToken = Map.of(
+                AuthenticationMethodFactory.APP_ROLE_TAG, map
+        );
         var server = new Server("URL", null, false, null, vaultGithubToken, "NAMESPACE", List.of(), false, 1);
         var authenticationProviderMock = Mockito.mock(AuthenticationMethodFactory.class);
-        var githubTokenMock = Mockito.mock(GithubToken.class);
-        var vaultClient = Vaults.create();
-        when(authenticationProviderMock.fromServer(any())).thenReturn(githubTokenMock);
-        doNothing().when(githubTokenMock).login();
+        var authenticationMethodMock = Mockito.mock(AuthenticationMethod.class);
+        var vaultClient = VaultClient.create();
+        when(authenticationProviderMock.fromServer(any())).thenReturn(authenticationMethodMock);
+        doNothing().when(authenticationMethodMock).login();
 
         vaultClient.authenticateIfNecessary(List.of(server), authenticationProviderMock);
     }
@@ -38,7 +41,7 @@ public class TestVaults {
     @Test
     public void testAuthenticationIfNecessaryWithoutMethod() {
         var server = new Server("URL", null, false, null, null, "NAMESPACE", List.of(), false, 1);
-        var vaultClient = Vaults.create();
+        var vaultClient = VaultClient.create();
 
         VaultException ex = Assertions.assertThrows(
                 VaultException.class,
@@ -52,7 +55,7 @@ public class TestVaults {
         var server = new Server("URL", null, false, null, null, "NAMESPACE", List.of(), true, 1);
         var vaultBackendProviderMock = Mockito.mock(VaultBackendProvider.class);
         when(vaultBackendProviderMock.vault(any(),any(),any(),anyBoolean(),any(),any())).thenReturn(null);
-        var vaultClient = Vaults.createForBackend(vaultBackendProviderMock);
+        var vaultClient = VaultClient.createForBackend(vaultBackendProviderMock);
 
         vaultClient.pull(List.of(server), null);
 
@@ -64,7 +67,7 @@ public class TestVaults {
         var server = new Server("URL", null, false, null, null, "NAMESPACE", List.of(), true, 1);
         var vaultBackendProviderMock = Mockito.mock(VaultBackendProvider.class);
         when(vaultBackendProviderMock.vault(any(),any(),any(),anyBoolean(),any(),any())).thenReturn(null);
-        var vaultClient = Vaults.createForBackend(vaultBackendProviderMock);
+        var vaultClient = VaultClient.createForBackend(vaultBackendProviderMock);
 
         vaultClient.push(List.of(server), null);
 
@@ -77,7 +80,7 @@ public class TestVaults {
         var vaultBackendProviderMock = Mockito.mock(VaultBackendProvider.class);
         var vaultMock = Mockito.mock(Vault.class);
         when(vaultBackendProviderMock.vault(any(),any(),any(),anyBoolean(),any(),any())).thenReturn(vaultMock);
-        var vaultClient = Vaults.createForBackend(vaultBackendProviderMock);
+        var vaultClient = VaultClient.createForBackend(vaultBackendProviderMock);
 
         vaultClient.pull(List.of(server), null);
 
@@ -90,7 +93,7 @@ public class TestVaults {
         var vaultBackendProviderMock = Mockito.mock(VaultBackendProvider.class);
         var vaultMock = Mockito.mock(Vault.class);
         when(vaultBackendProviderMock.vault(any(),any(),any(),anyBoolean(),any(),any())).thenReturn(vaultMock);
-        var vaultClient = Vaults.createForBackend(vaultBackendProviderMock);
+        var vaultClient = VaultClient.createForBackend(vaultBackendProviderMock);
 
         vaultClient.push(List.of(server), null);
 
@@ -104,7 +107,7 @@ public class TestVaults {
         var vaultBackendProviderMock = Mockito.mock(VaultBackendProvider.class);
         var vaultMock = createVaultMock(paths);
         when(vaultBackendProviderMock.vault(any(),any(),any(),anyBoolean(),any(),any())).thenReturn(vaultMock);
-        var vaultClient = Vaults.createForBackend(vaultBackendProviderMock);
+        var vaultClient = VaultClient.createForBackend(vaultBackendProviderMock);
 
         vaultClient.pull(List.of(server), new Properties());
 
@@ -119,7 +122,7 @@ public class TestVaults {
         var propertyMap = propertiesFromPaths(paths);
         var vaultMock = createVaultMock(paths);
         when(vaultBackendProviderMock.vault(any(),any(),any(),anyBoolean(),any(),any())).thenReturn(vaultMock);
-        var vaultClient = Vaults.createForBackend(vaultBackendProviderMock);
+        var vaultClient = VaultClient.createForBackend(vaultBackendProviderMock);
         var properties = new Properties();
         properties.putAll(propertyMap);
 

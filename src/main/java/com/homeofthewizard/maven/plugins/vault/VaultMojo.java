@@ -50,7 +50,7 @@ abstract class VaultMojo extends AbstractMojo {
   VaultMojo() {
     this.authenticationMethodProvider = new AuthenticationMethodFactory();
     var vaultBackendProvider = new VaultBackendProvider();
-    this.vaultClient = Vaults.createForBackend(vaultBackendProvider);
+    this.vaultClient = VaultClient.createForBackend(vaultBackendProvider);
   }
 
   VaultMojo(AuthenticationMethodProvider authenticationMethodProvider,

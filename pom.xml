@@ -67,7 +67,6 @@
         <version.jacoco>0.8.7</version.jacoco>
         <version.jacoco.plugin>${version.jacoco}</version.jacoco.plugin>
         <version.javadoc.plugin>3.2.0</version.javadoc.plugin>
-        <version.junit>4.13.2</version.junit>
         <version.maven>3.9.1</version.maven>
         <version.moby>1.0.0</version.moby>
         <version.nginx>1.11</version.nginx>
@@ -77,12 +76,13 @@
         <version.plugin.plugin>3.6.2</version.plugin.plugin>
         <version.source.plugin>3.0.1</version.source.plugin>
         <version.surefire.plugin>2.22.0</version.surefire.plugin>
-        <version.vault>1.13.3</version.vault>
+        <version.vault>latest</version.vault>
         <version.vault.driver>5.1.0</version.vault.driver>
         <mockito-core.version>5.2.0</mockito-core.version>
         <nexus-staging-maven-plugin.version>1.6.13</nexus-staging-maven-plugin.version>
         <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
         <junit-jupiter.version>5.9.2</junit-jupiter.version>
+        <jackson-databind.version>2.15.2</jackson-databind.version>
     </properties>
 
     <dependencies>
@@ -168,6 +168,11 @@
             <version>${version.jacoco}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson-databind.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -181,7 +186,7 @@
                     <images>
                         <image>
                             <alias>${docker.vault.host}</alias>
-                            <name>vault:${version.vault}</name>
+                            <name>hashicorp/vault:${version.vault}</name>
                             <run>
                                 <capAdd>
                                     <capAdd>IPC_LOCK</capAdd>
@@ -255,6 +260,24 @@
                 </executions>
             </plugin>
             <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>properties-maven-plugin</artifactId>
+                <version>1.2.0</version>
+                <executions>
+                    <execution>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>read-project-properties</goal>
+                        </goals>
+                        <configuration>
+                            <files>
+                                <file>docker/vault/appRole.properties</file>
+                            </files>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
                 <version>${version.checkstyle.plugin}</version>
@@ -299,6 +322,8 @@
                         <vault.host>localhost</vault.host>
                         <vault.port>${docker.nginx.port}</vault.port>
                         <vault.token>${docker.vault.token}</vault.token>
+                        <vault.appRole.id>${roleId}</vault.appRole.id>
+                        <vault.appRole.secret>${secretId}</vault.appRole.secret>
                         <vault.github.token>${docker.vault.github.token}</vault.github.token>
                         <sun.net.spi.nameservice.provider.1>dns,moby</sun.net.spi.nameservice.provider.1>
                         <sun.net.spi.nameservice.provider.2>default</sun.net.spi.nameservice.provider.2>

@@ -16,31 +16,25 @@
 
 package com.homeofthewizard.maven.plugins.vault;
 
-import static com.homeofthewizard.maven.plugins.vault.VaultTestHelper.randomPaths;
-
 import com.bettercloud.vault.VaultException;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
-import com.homeofthewizard.maven.plugins.vault.config.AuthenticationMethodFactory;
-import com.homeofthewizard.maven.plugins.vault.config.AuthenticationMethodProvider;
-import com.homeofthewizard.maven.plugins.vault.config.Path;
-import com.homeofthewizard.maven.plugins.vault.config.Server;
+import com.homeofthewizard.maven.plugins.vault.client.VaultClient;
+import com.homeofthewizard.maven.plugins.vault.config.*;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Consumer;
 
+import static com.homeofthewizard.maven.plugins.vault.VaultTestHelper.randomPaths;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 /**
- * Provides integration tests for the {@link Vaults} class.
+ * Provides integration tests for the {@link VaultClient} class.
  */
 public class IntTestVaults {
 
@@ -49,8 +43,13 @@ public class IntTestVaults {
   private static final String VAULT_PORT = System.getProperty("vault.port", "443");
   private static final String VAULT_SERVER = String.format("https://%s:%s", VAULT_HOST, VAULT_PORT);
   private static final String VAULT_TOKEN = System.getProperty("vault.token");
-  private static final Map<String,String> VAULT_GITHUB_AUTH = Map.of(AuthenticationMethodFactory.GITHUB_TOKEN_TAG, "token");
-
+  private static String githubTokenTag = GithubToken.class.getDeclaredFields()[0].getName();
+  private static TreeMap map;
+  static {
+    map = new TreeMap<>();
+    map.put(githubTokenTag,"token");
+  }
+  private static final Map<String, TreeMap> VAULT_GITHUB_AUTH = Map.of(AuthenticationMethodFactory.GITHUB_TOKEN_TAG, map);
   private static class Fixture {
 
     private final AuthenticationMethodProvider authenticationMethodProvider;
@@ -81,14 +80,14 @@ public class IntTestVaults {
   }
 
   /**
-   * Tests the {@link Vaults#pull(List, Properties)} and {@link Vaults#push(List, Properties)} methods.
+   * Tests the {@link VaultClient#pull(List, Properties)} and {@link VaultClient#push(List, Properties)} methods.
    *
    * @throws URISyntaxException if an exception is raised parsing the certificate
    */
   @Test
   public void testPushAndPull() throws URISyntaxException {
     Fixture.with(fixture -> {
-      var client = Vaults.create();
+      var client = VaultClient.create();
       try {
         client.push(fixture.servers, fixture.properties);
         Properties properties = new Properties();
@@ -105,14 +104,14 @@ public class IntTestVaults {
   }
 
   /**
-   * Tests the {@link Vaults#authenticateIfNecessary(List<Server>, AuthenticationMethodProvider)} method.
+   * Tests the {@link VaultClient#authenticateIfNecessary(List, AuthenticationMethodProvider)}
    *
    * @throws URISyntaxException if an exception is raised parsing the certificate
    */
   @Test
   public void testAuthentication() throws URISyntaxException {
     Fixture.with(fixture -> {
-      var client = Vaults.create();
+      var client = VaultClient.create();
       try {
         client.authenticateIfNecessary(fixture.servers, fixture.authenticationMethodProvider);
       } catch (VaultException exception) {

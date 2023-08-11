@@ -21,6 +21,16 @@ public class VaultBackendProvider {
    */
   private static final int READ_TIMEOUT = 30;
 
+  /**
+   * Returns a configured instance of the {@link Vault} class.
+   *
+   * @param server         the server
+   * @param token          the token
+   * @param namespace      the namespace
+   * @param sslVerify      {@code true} if the connection should be verified; otherwise, {@code false}
+   * @param sslCertificate the certificate file or null if not needed
+   * @return the vaultConfig
+   */
   public Vault vault(String server,
                      String token,
                      String namespace,

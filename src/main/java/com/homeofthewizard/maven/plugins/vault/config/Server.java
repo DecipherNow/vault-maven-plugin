@@ -21,6 +21,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.TreeMap;
 
 /**
  * Represents a Vault server.
@@ -35,7 +36,7 @@ public class Server implements Serializable {
 
   private String token;
 
-  private Map<String,String> authentication;
+  private Map<String,TreeMap> authentication;
 
   private String namespace;
 
@@ -60,7 +61,8 @@ public class Server implements Serializable {
    * @param namespace the namespace for the vault
    * @param paths the paths for the server
    */
-  public Server(String url, String token, boolean sslVerify, File sslCertificate, Map<String, String> authentication,
+  public Server(String url, String token, boolean sslVerify, File sslCertificate,
+                Map<String, TreeMap> authentication,
                 String namespace,
                 List<Path> paths,
                 boolean skipExecution, Integer engineVersion) {
@@ -116,7 +118,7 @@ public class Server implements Serializable {
    *
    * @return the authentication
    */
-  public Map<String,String> getAuthentication() {
+  public Map<String, TreeMap> getAuthentication() {
     return this.authentication;
   }
 

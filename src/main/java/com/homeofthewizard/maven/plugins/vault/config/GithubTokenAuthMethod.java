@@ -1,14 +1,13 @@
-package com.homeofthewizard.maven.plugins.vault;
+package com.homeofthewizard.maven.plugins.vault.config;
 
 import static com.homeofthewizard.maven.plugins.vault.config.AuthenticationMethodFactory.GITHUB_TOKEN_TAG;
 
 import com.bettercloud.vault.VaultException;
 import com.bettercloud.vault.api.Auth;
-import com.homeofthewizard.maven.plugins.vault.config.Server;
 
-public class GithubToken extends AuthenticationMethod {
+class GithubTokenAuthMethod extends AuthenticationMethod<GithubToken> {
 
-  Server server;
+  private final Server server;
 
   /**
    * Initializes a new instance of the {@link AuthenticationMethod} class.
@@ -16,8 +15,8 @@ public class GithubToken extends AuthenticationMethod {
    * @param auth Auth
    * @param server Server
    */
-  public GithubToken(Auth auth, Server server) {
-    super(auth);
+  GithubTokenAuthMethod(Auth auth, Server server) {
+    super(auth, GithubToken.class);
     this.server = server;
   }
 
@@ -27,9 +26,10 @@ public class GithubToken extends AuthenticationMethod {
    * @throws VaultException in case authentication fails
    */
   public void login() throws VaultException {
+    var githubPat = getAuthCredentials(server.getAuthentication().get(GITHUB_TOKEN_TAG)).getPat();
 
     String token = auth
-                .loginByGithub(server.getAuthentication().get(GITHUB_TOKEN_TAG))
+                .loginByGithub(githubPat)
                 .getAuthClientToken();
 
     server.setToken(token);

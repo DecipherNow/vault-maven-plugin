@@ -56,7 +56,6 @@ plugins:
 
 color_scheme: dark
 
-# Aux links for the upper right navigation
 aux_links:
   "Vault Maven Plugin on GitHub":
     - "https://github.com/HomeOfTheWizard/vault-maven-plugin"

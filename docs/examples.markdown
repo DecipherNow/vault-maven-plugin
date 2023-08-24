@@ -146,41 +146,22 @@ You can define the following in your pom.xml to fetch the credential for `APPLIC
                             <mappings>
                                 <mapping>
                                     <key>vaultSecretKey</key>
-                                    <property>secretMavenProperty</property>
+                                    <property>APPLICATION_SECRET</property>
                                 </mapping>
                             </mappings>
                         </path>
                     </paths>
                 </server>
             </servers>
+            <outputMethod>SystemProperties</outputMethod>
         </configuration>
-    </plugin>
-    <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>properties-maven-plugin</artifactId>
-        <version>1.2.0</version>
-        <executions>
-            <execution>
-                <goals>
-                    <goal>set-system-properties</goal>
-                </goals>
-                <configuration>
-                    <properties>
-                        <property>
-                            <name>APPLICATION_SECRET</name>
-                            <value>${secretMavenProperty}</value>
-                        </property>
-                    </properties>
-                </configuration>
-            </execution>
-        </executions>
     </plugin>
 </plugins>
 ```
 
-The above code will first fetch the secrets from vault with the vault-plugin, then the property-plugin will add them to Maven's system properties.  
+The above code will first fetch the secrets from vault with the vault-plugin, then they will be added to Maven's system properties (`<outputMethod>` configuration).    
 After that you can run your java app with either [exec-maven-plugin](http://www.mojohaus.org/exec-maven-plugin/usage.html) or the [spring-boot-maven-plugin](https://docs.spring.io/spring-boot/docs/current/maven-plugin/reference/htmlsingle/)
-By running your application from maven, the maven's system properties will be transfered to your application.  
+By running your application with maven, maven's system properties will be shared with your application.  
 
 ### In case you are running locally
 If you want to debug your spring application locally, there are two ways to do this:  
@@ -320,7 +301,9 @@ The only thing to provide is the token to authenticate to Vault server (`<token>
 Isn't that magical ? :mage_man:
 
 # 3. Application that does not use Maven
-Many developpers use .env files to manage environment variables on their localhost.  
+Many developers use .env files to manage environment variables on their localhost.  
 It may be the case even on production for application that do not have tools to fetch the secrets directly from a secure shared place like Vault.    
-If that is the case, the plugin can generate a .env file for you.  
+If that is the case, the plugin can generate a .env file for you.    
+`<outputMethod>EnvFile</outputMethod>` configuration allows this.  
 Then you can inject it with [dotenv-java](https://github.com/cdimascio/dotenv-java) for example.  
+There are also IntelliJ plugins that help you inject secrets via .env files in your local environment.  

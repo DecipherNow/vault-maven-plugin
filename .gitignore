@@ -14,3 +14,5 @@
 # Maven
 log/
 target/
+/docker/vault/appRole.properties
+/docker/vault/.cache/snowflake/ocsp_response_cache.json

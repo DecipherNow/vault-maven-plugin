@@ -80,7 +80,7 @@ public class IntTestVaults {
   }
 
   /**
-   * Tests the {@link VaultClient#pull(List, Properties)} and {@link VaultClient#push(List, Properties)} methods.
+   * Tests the {@link VaultClient#pull(List, Properties, OutputMethod)} and {@link VaultClient#push(List, Properties)} methods.
    *
    * @throws URISyntaxException if an exception is raised parsing the certificate
    */
@@ -92,7 +92,7 @@ public class IntTestVaults {
         client.push(fixture.servers, fixture.properties);
         Properties properties = new Properties();
         try {
-          client.pull(fixture.servers, properties);
+          client.pull(fixture.servers, properties, OutputMethod.MavenProperties);
           assertTrue(Maps.difference(fixture.properties, properties).areEqual());
         } catch (VaultException exception) {
           fail(String.format("Unexpected exception while pulling to Vault: %s", exception.getMessage()));

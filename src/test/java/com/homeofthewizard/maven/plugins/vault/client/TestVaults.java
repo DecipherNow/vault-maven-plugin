@@ -57,7 +57,7 @@ public class TestVaults {
         when(vaultBackendProviderMock.vault(any(),any(),any(),anyBoolean(),any(),any())).thenReturn(null);
         var vaultClient = VaultClient.createForBackend(vaultBackendProviderMock);
 
-        vaultClient.pull(List.of(server), null);
+        vaultClient.pull(List.of(server), null, OutputMethod.MavenProperties);
 
         verify(vaultBackendProviderMock, times(0)).vault(any(),any(),any(),anyBoolean(),any(),any());
     }
@@ -82,7 +82,7 @@ public class TestVaults {
         when(vaultBackendProviderMock.vault(any(),any(),any(),anyBoolean(),any(),any())).thenReturn(vaultMock);
         var vaultClient = VaultClient.createForBackend(vaultBackendProviderMock);
 
-        vaultClient.pull(List.of(server), null);
+        vaultClient.pull(List.of(server), null, OutputMethod.MavenProperties);
 
         verify(vaultBackendProviderMock, times(1)).vault(any(),any(),any(),anyBoolean(),any(),any());
     }
@@ -109,7 +109,7 @@ public class TestVaults {
         when(vaultBackendProviderMock.vault(any(),any(),any(),anyBoolean(),any(),any())).thenReturn(vaultMock);
         var vaultClient = VaultClient.createForBackend(vaultBackendProviderMock);
 
-        vaultClient.pull(List.of(server), new Properties());
+        vaultClient.pull(List.of(server), new Properties(), OutputMethod.MavenProperties);
 
         verify(vaultBackendProviderMock, times(1)).vault(any(),any(),any(),anyBoolean(),any(),any());
     }

@@ -47,7 +47,7 @@ public class PullMojo extends VaultMojo {
       return;
     }
     try {
-      vaultClient.pull(this.servers, this.project.getProperties());
+      vaultClient.pull(this.servers, this.project.getProperties(), this.outputMethod);
     } catch (VaultException exception) {
       throw new MojoExecutionException("Exception thrown pulling secrets.", exception);
     }

@@ -21,6 +21,7 @@ import com.homeofthewizard.maven.plugins.vault.client.VaultBackendProvider;
 import com.homeofthewizard.maven.plugins.vault.client.VaultClient;
 import com.homeofthewizard.maven.plugins.vault.config.AuthenticationMethodFactory;
 import com.homeofthewizard.maven.plugins.vault.config.AuthenticationMethodProvider;
+import com.homeofthewizard.maven.plugins.vault.config.OutputMethod;
 import com.homeofthewizard.maven.plugins.vault.config.Server;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -28,7 +29,6 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
 import java.util.List;
-
 
 /**
  * Provides an abstract class for mojos that work with Vault.
@@ -40,6 +40,9 @@ abstract class VaultMojo extends AbstractMojo {
 
   @Parameter(required = true)
   protected List<Server> servers;
+
+  @Parameter(defaultValue = "MavenProperties")
+  protected OutputMethod outputMethod;
 
   @Parameter(property = "skipExecution", defaultValue = "false")
   protected boolean skipExecution;

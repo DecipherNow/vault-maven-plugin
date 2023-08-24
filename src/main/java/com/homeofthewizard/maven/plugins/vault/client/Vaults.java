@@ -8,6 +8,7 @@ import com.bettercloud.vault.Vault;
 import com.bettercloud.vault.VaultException;
 import com.homeofthewizard.maven.plugins.vault.config.AuthenticationMethodProvider;
 import com.homeofthewizard.maven.plugins.vault.config.Mapping;
+import com.homeofthewizard.maven.plugins.vault.config.OutputMethod;
 import com.homeofthewizard.maven.plugins.vault.config.Path;
 import com.homeofthewizard.maven.plugins.vault.config.Server;
 
@@ -36,12 +37,13 @@ final class Vaults implements VaultClient {
   /**
    * Pulls secrets from one or more Vault servers and paths and updates a {@link Properties} instance with the values.
    *
-   * @param servers the servers
-   * @param properties the properties
+   * @param servers      the servers
+   * @param properties   the properties
+   * @param outputMethod the output method
    * @throws VaultException if an exception is throw pulling the secrets
    */
   @Override
-  public void pull(List<Server> servers, Properties properties) throws VaultException {
+  public void pull(List<Server> servers, Properties properties, OutputMethod outputMethod) throws VaultException {
     for (Server server : servers) {
       if (server.isSkipExecution()) {
         continue;
@@ -56,6 +58,7 @@ final class Vaults implements VaultClient {
             throw new NoSuchElementException(message);
           }
           properties.setProperty(mapping.getProperty(), secrets.get(mapping.getKey()));
+          outputMethod.flush(properties, secrets, mapping);
         }
       }
     }

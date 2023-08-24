@@ -3,11 +3,7 @@ package com.homeofthewizard.maven.plugins.vault;
 import com.bettercloud.vault.VaultException;
 import com.google.common.collect.ImmutableList;
 import com.homeofthewizard.maven.plugins.vault.client.VaultClient;
-import com.homeofthewizard.maven.plugins.vault.config.AuthenticationMethodFactory;
-import com.homeofthewizard.maven.plugins.vault.config.AuthenticationMethodProvider;
-import com.homeofthewizard.maven.plugins.vault.config.Path;
-import com.homeofthewizard.maven.plugins.vault.config.Server;
-import com.homeofthewizard.maven.plugins.vault.config.GithubToken;
+import com.homeofthewizard.maven.plugins.vault.config.*;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.junit.jupiter.api.Assertions;
@@ -46,7 +42,7 @@ public class TestPullMojo {
         var authenticationMethodProvider = Mockito.mock(AuthenticationMethodProvider.class);
         var client = Mockito.mock(VaultClient.class);
         doNothing().when(client).authenticateIfNecessary(any(),any());
-        doNothing().when(client).pull(any(),any());
+        doNothing().when(client).pull(any(),any(),any());
 
         var mojo = new PullMojo(authenticationMethodProvider, client);
         mojo.project = new MavenProject();
@@ -55,7 +51,7 @@ public class TestPullMojo {
 
         mojo.execute();
 
-        verify(client, times(0)).pull(any(),any());
+        verify(client, times(0)).pull(any(),any(),any());
         verify(client, times(0)).authenticateIfNecessary(any(),any());
     }
 
@@ -65,7 +61,7 @@ public class TestPullMojo {
         var authenticationMethodProvider = Mockito.mock(AuthenticationMethodProvider.class);
         var client = Mockito.mock(VaultClient.class);
         doNothing().when(client).authenticateIfNecessary(any(),any());
-        doNothing().when(client).pull(any(),any());
+        doNothing().when(client).pull(any(),any(),any());
 
         var mojo = new PullMojo(authenticationMethodProvider, client);
         mojo.project = new MavenProject();
@@ -74,7 +70,7 @@ public class TestPullMojo {
 
         mojo.execute();
 
-        verify(client, times(1)).pull(any(),any());
+        verify(client, times(1)).pull(any(),any(),any());
         verify(client, times(1)).authenticateIfNecessary(any(),any());
     }
 
@@ -83,7 +79,7 @@ public class TestPullMojo {
         List<Path> paths = randomPaths(10, 10);
         var authenticationMethodProvider = Mockito.mock(AuthenticationMethodProvider.class);
         var client = Mockito.mock(VaultClient.class);
-        doNothing().when(client).pull(any(),any());
+        doNothing().when(client).pull(any(),any(),any());
 
         var mojo = new PullMojo(authenticationMethodProvider, client);
         mojo.project = new MavenProject();
@@ -92,7 +88,7 @@ public class TestPullMojo {
 
         mojo.executeVaultOperation();
 
-        verify(client, times(1)).pull(any(),any());
+        verify(client, times(1)).pull(any(),any(),any());
     }
 
     @Test
@@ -109,7 +105,7 @@ public class TestPullMojo {
 
         mojo.executeVaultOperation();
 
-        verify(client, times(0)).pull(any(),any());
+        verify(client, times(0)).pull(any(),any(),any());
     }
 
     @Test
@@ -118,7 +114,7 @@ public class TestPullMojo {
         var authenticationMethodProvider = Mockito.mock(AuthenticationMethodProvider.class);
         var client = Mockito.mock(VaultClient.class);
         doThrow(VaultException.class).when(client).authenticateIfNecessary(any(),any());
-        doNothing().when(client).pull(any(),any());
+        doNothing().when(client).pull(any(),any(),any());
 
         var mojo = new PullMojo(authenticationMethodProvider, client);
         mojo.project = new MavenProject();
@@ -127,7 +123,7 @@ public class TestPullMojo {
 
         Assertions.assertThrows(MojoExecutionException.class, ()-> mojo.execute());
         verify(client, times(1)).authenticateIfNecessary(any(),any());
-        verify(client, times(0)).pull(any(),any());
+        verify(client, times(0)).pull(any(),any(),any());
     }
 
     @Test
@@ -135,7 +131,7 @@ public class TestPullMojo {
         List<Path> paths = randomPaths(10, 10);
         var authenticationMethodProvider = Mockito.mock(AuthenticationMethodProvider.class);
         var client = Mockito.mock(VaultClient.class);
-        doThrow(VaultException.class).when(client).pull(any(),any());
+        doThrow(VaultException.class).when(client).pull(any(),any(),any());
 
         var mojo = new PullMojo(authenticationMethodProvider, client);
         mojo.project = new MavenProject();

@@ -20,10 +20,7 @@ import com.bettercloud.vault.VaultException;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 import com.homeofthewizard.maven.plugins.vault.client.VaultClient;
-import com.homeofthewizard.maven.plugins.vault.config.AuthenticationMethodFactory;
-import com.homeofthewizard.maven.plugins.vault.config.GithubToken;
-import com.homeofthewizard.maven.plugins.vault.config.Path;
-import com.homeofthewizard.maven.plugins.vault.config.Server;
+import com.homeofthewizard.maven.plugins.vault.config.*;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.junit.jupiter.api.Test;
@@ -89,6 +86,7 @@ public class IntTestPullMojo {
       mojo.project = new MavenProject();
       mojo.servers = fixture.servers;
       mojo.skipExecution = false;
+      mojo.outputMethod = OutputMethod.MavenProperties;
       var client = VaultClient.create();
       try {
         client.push(fixture.servers, fixture.properties);
@@ -109,6 +107,7 @@ public class IntTestPullMojo {
       mojo.project = new MavenProject();
       mojo.servers = fixture.servers;
       mojo.skipExecution = false;
+      mojo.outputMethod = OutputMethod.MavenProperties;
       var client = VaultClient.create();
       try {
         client.push(fixture.servers, fixture.properties);
@@ -129,6 +128,7 @@ public class IntTestPullMojo {
       mojo.project = new MavenProject();
       mojo.servers = fixture.servers;
       mojo.skipExecution = true;
+      mojo.outputMethod = OutputMethod.MavenProperties;
       var client = VaultClient.create();
       try {
         client.push(fixture.servers, fixture.properties);

@@ -2,8 +2,8 @@ package com.homeofthewizard.maven.plugins.vault.config;
 
 import static com.homeofthewizard.maven.plugins.vault.config.AuthenticationMethodFactory.GITHUB_TOKEN_TAG;
 
-import com.bettercloud.vault.VaultException;
-import com.bettercloud.vault.api.Auth;
+import io.github.jopenlibs.vault.VaultException;
+import io.github.jopenlibs.vault.api.Auth;
 
 class GithubTokenAuthMethod extends AuthenticationMethod<GithubToken> {
 

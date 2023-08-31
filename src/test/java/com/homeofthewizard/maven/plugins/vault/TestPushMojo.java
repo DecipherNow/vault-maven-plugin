@@ -4,7 +4,7 @@ import static com.homeofthewizard.maven.plugins.vault.VaultTestHelper.randomPath
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-import com.bettercloud.vault.VaultException;
+import io.github.jopenlibs.vault.VaultException;
 import com.google.common.collect.ImmutableList;
 import com.homeofthewizard.maven.plugins.vault.client.VaultClient;
 import com.homeofthewizard.maven.plugins.vault.config.AuthenticationMethodFactory;

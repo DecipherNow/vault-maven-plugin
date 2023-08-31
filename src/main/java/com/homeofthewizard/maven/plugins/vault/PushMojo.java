@@ -16,9 +16,9 @@
 
 package com.homeofthewizard.maven.plugins.vault;
 
-import com.bettercloud.vault.VaultException;
 import com.homeofthewizard.maven.plugins.vault.client.VaultClient;
 import com.homeofthewizard.maven.plugins.vault.config.AuthenticationMethodProvider;
+import io.github.jopenlibs.vault.VaultException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;

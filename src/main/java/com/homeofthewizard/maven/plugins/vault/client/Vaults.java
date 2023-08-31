@@ -4,13 +4,13 @@ import static com.homeofthewizard.maven.plugins.vault.config.AuthenticationMetho
 
 import com.google.common.base.Strings;
 
-import com.bettercloud.vault.Vault;
-import com.bettercloud.vault.VaultException;
 import com.homeofthewizard.maven.plugins.vault.config.AuthenticationMethodProvider;
 import com.homeofthewizard.maven.plugins.vault.config.Mapping;
 import com.homeofthewizard.maven.plugins.vault.config.OutputMethod;
 import com.homeofthewizard.maven.plugins.vault.config.Path;
 import com.homeofthewizard.maven.plugins.vault.config.Server;
+import io.github.jopenlibs.vault.Vault;
+import io.github.jopenlibs.vault.VaultException;
 
 import java.util.HashMap;
 import java.util.List;

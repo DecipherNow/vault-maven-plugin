@@ -1,8 +1,8 @@
 package com.homeofthewizard.maven.plugins.vault.config;
 
-import com.bettercloud.vault.VaultException;
-import com.bettercloud.vault.api.Auth;
-import com.bettercloud.vault.response.AuthResponse;
+import io.github.jopenlibs.vault.VaultException;
+import io.github.jopenlibs.vault.api.Auth;
+import io.github.jopenlibs.vault.response.AuthResponse;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

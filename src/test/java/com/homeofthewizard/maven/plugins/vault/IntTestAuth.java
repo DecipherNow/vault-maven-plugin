@@ -1,6 +1,6 @@
 package com.homeofthewizard.maven.plugins.vault;
 
-import com.bettercloud.vault.VaultException;
+import io.github.jopenlibs.vault.VaultException;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 import com.homeofthewizard.maven.plugins.vault.client.VaultClient;
@@ -91,11 +91,12 @@ public class IntTestAuth {
                 mojoStub.execute();
                 mojoStub.servers.forEach(server -> assertNotNull(server.getToken()));
             } catch (MojoExecutionException exception) {
-                fail(String.format("Unexpected exception while executing: %s", exception.getMessage()));
+                fail(String.format("Unexpected exception while executing: %s", exception.getCause().getMessage()));
             }
         }, VAULT_GITHUB_AUTH);
     }
 
+    @Test
     public void testVaultAppRoleAuthentication() throws URISyntaxException {
         IntTestAuth.Fixture.with(fixture -> {
             mojoStub.project = new MavenProject();

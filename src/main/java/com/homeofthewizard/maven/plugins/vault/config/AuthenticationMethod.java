@@ -1,8 +1,8 @@
 package com.homeofthewizard.maven.plugins.vault.config;
 
-import com.bettercloud.vault.VaultException;
-import com.bettercloud.vault.api.Auth;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.github.jopenlibs.vault.VaultException;
+import io.github.jopenlibs.vault.api.Auth;
 
 import java.util.Map;
 

@@ -1,9 +1,9 @@
 package com.homeofthewizard.maven.plugins.vault.client;
 
-import com.bettercloud.vault.VaultException;
 import com.homeofthewizard.maven.plugins.vault.config.AuthenticationMethodProvider;
 import com.homeofthewizard.maven.plugins.vault.config.OutputMethod;
 import com.homeofthewizard.maven.plugins.vault.config.Server;
+import io.github.jopenlibs.vault.VaultException;
 
 import java.util.List;
 import java.util.Properties;

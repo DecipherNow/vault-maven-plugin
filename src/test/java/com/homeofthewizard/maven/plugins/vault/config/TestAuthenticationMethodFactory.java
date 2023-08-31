@@ -1,6 +1,6 @@
 package com.homeofthewizard.maven.plugins.vault.config;
 
-import com.bettercloud.vault.VaultException;
+import io.github.jopenlibs.vault.VaultException;
 import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

@@ -2,10 +2,10 @@ package com.homeofthewizard.maven.plugins.vault.client;
 
 import com.google.common.base.Strings;
 
-import com.bettercloud.vault.SslConfig;
-import com.bettercloud.vault.Vault;
-import com.bettercloud.vault.VaultConfig;
-import com.bettercloud.vault.VaultException;
+import io.github.jopenlibs.vault.SslConfig;
+import io.github.jopenlibs.vault.Vault;
+import io.github.jopenlibs.vault.VaultConfig;
+import io.github.jopenlibs.vault.VaultException;
 
 import java.io.File;
 
@@ -37,7 +37,7 @@ public class VaultBackendProvider {
                      boolean sslVerify,
                      File sslCertificate,
                      Integer engineVersion) throws VaultException {
-    return new Vault(vaultConfig(server, token, namespace, sslVerify, sslCertificate, engineVersion));
+    return Vault.create(vaultConfig(server, token, namespace, sslVerify, sslCertificate, engineVersion));
   }
 
 

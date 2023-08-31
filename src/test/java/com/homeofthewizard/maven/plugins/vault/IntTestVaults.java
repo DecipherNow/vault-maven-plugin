@@ -16,7 +16,7 @@
 
 package com.homeofthewizard.maven.plugins.vault;
 
-import com.bettercloud.vault.VaultException;
+import io.github.jopenlibs.vault.VaultException;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 import com.homeofthewizard.maven.plugins.vault.client.VaultClient;

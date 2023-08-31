@@ -302,8 +302,11 @@ Isn't that magical ? :mage_man:
 
 # 3. Application that does not use Maven
 Many developers use .env files to manage environment variables on their localhost.  
-It may be the case even on production for application that do not have tools to fetch the secrets directly from a secure shared place like Vault.    
+It may be the case even on production for application that do not have tools to fetch the secrets directly from a secure shared place like Vault.      
+
 If that is the case, the plugin can generate a .env file for you.    
-`<outputMethod>EnvFile</outputMethod>` configuration allows this.  
-Then you can inject it with [dotenv-java](https://github.com/cdimascio/dotenv-java) for example.  
-There are also IntelliJ plugins that help you inject secrets via .env files in your local environment.  
+The configuration `<outputMethod>EnvFile</outputMethod>` allows this.    
+
+Then you can inject it with [dotenv-java](https://github.com/cdimascio/dotenv-java) for example.    
+
+There are also IntelliJ plugins that help you inject secrets via .env files before running/debugging the application in your local environment.    

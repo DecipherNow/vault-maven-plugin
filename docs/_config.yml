@@ -20,7 +20,7 @@
 
 title: vault-maven-plugin
 logo: "/assets/images/Vault-Maven-Plugin-colored.png"
-favicon: assets/images/favicon.png
+favicon_ico: "assets/images/favicon.png"
 email: ozgunn.oz@gmail.com
 description: >- # this means to ignore newlines until "baseurl:"
   Vault Maven Plugin is a plugin that allows fetching secrets from vault during the maven build of your project.

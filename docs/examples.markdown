@@ -192,7 +192,7 @@ The catch is not to let spring boot plugin to fork its JVM from the initial mave
 
 ### In case you have a Non-Spring Java application
 Spring boot manages system properties and environment variables differently that the standard way.  
-You will find here a [blog post](https://homeofthewizard.github.io/environmentvariables-in-java) that explains how the two works in java, and [here](https://www.baeldung.com/spring-boot-properties-env-variables) a post explaining spring's difference.  
+You will find here a [blog post](https://homeofthewizard.github.io/secrets-in-java) that explains how the two works in java, and [here](https://www.baeldung.com/spring-boot-properties-env-variables) a post explaining spring's difference.  
 But in short, Spring allows you to access both via the same API (using placeholders like `${myVar}`). So for a spring application that requires environment variables, we can emulate them by injecting System properties instead.    
 
 For a non Spring application that requires environment variables, we cannot do that, we need to give the JVM real environment variables.  

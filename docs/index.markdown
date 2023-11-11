@@ -1,6 +1,7 @@
 ---
 layout: page
 title: About Vault Maven Plugin
+nav_order: 1
 ---
 
 # No need to store your credentials locally anymore 
@@ -34,35 +35,42 @@ or some encryption keys for securing the communication itself.
 [Hashicorp Vault](https://www.vaultproject.io/) allows us to securely store those secrets, and share them with necessary counterparts.
 Those counterparts may be developers who want to run the application on their local environments, or the application's different execution environments (Test, Production, CI ect...)  
 
-{: .warning }
 Organisations that has a Hashicorp Vault, in general, are already using a cloud based architecture.    
 Hence, already have some ways for the application's credentials to be fetched automatically from Vault, instead of storing them locally on each environment separately.  
 Ex: Orchestrated Container environments like Kubernetes,  
 or CI tools like Jenkins have a Vault plugin to do so.  
-The idea behind using those tools, is to fetch the credentials in advance, to speed up the start time of your application.
 
-But it may be the case that : 
-* Your enterprise's IT infrastructure does not have such tools yet,  
-* It may be in a transition phase, or maybe some legacy applications that are not compatible with such tools.  
-* For some reason even if you have such tools, the Vault plugins are not available.   
-* Such tools are not available on developers' local environments,  
-where lots of enterprises still provide Windows PCs without a Docker or K8s.
-
-This plugin aims to help those cases :santa:.  
-
-**But not only!** There are some cases where we don't want to store any configuration related to Vault in any execution environment, but only credentials to access it.    
-For example batch applications may prefer to tradeoff for the simplicity of configuration over the speed of startup :massage_man:.
+{: .warning }
+All those plugins/tools, all require you to declare your secrets on their own configuration file, causing duplication among different config files.
 
 {: .important }
-In short, this plugin gives you a simpler and more secure way to manage your secrets.  
-Everything, except the credentials to vault, can be stored on version control.   
+By using this plugin to fetch your secrets, you can unify all your configuration and secrets declaration in a single file, the pom.xml.  
+So everything, except the credentials to vault, can be stored on version control.  
 And if you use Github PAT authentication, even that can be on version control!  
 
 {: .warning }
-Just keep in mind that fetching the secrets in time of execution has an implication of I/O, network and additional time of startup. 
+The idea behind using those plugins/tools, like jenkins Vault plugin or the Vault Agent that is used to save your secrets on K8s, is to fetch the credentials in advance, so that they are available right away at the start time of your application, making it to boot faster.
+
+{: .important }
+But there are some cases, for example batch applications, where we may prefer to tradeoff for the simplicity of configuration over the speed of startup :massage_man:.  
+Just keep in mind that fetching the secrets in time of execution has an implication of I/O, network and additional time of startup.  
+
+But still If you are sensible to the boot time of your application, lets say you have a web scaling app running on K8s,  
+You can still use this plugin, still with a single definition of your secrets in the pom.xml, to create your secret.yaml for K8s at its deployment time instead of the boot time. :wink:   
+
+
+But it may also be the case that : 
+* Your enterprise's IT infrastructure does not have such tools yet,  
+* It may be in a transition phase, or maybe some legacy applications that are not compatible with such tools.  
+* For some reason even if you have such tools, the Vault plugins are not available.   
+* **Such tools are not available on developers' local environments,**  
+where lots of enterprises still provide Windows PCs without a Docker or K8s.
+
+This plugin aims to help all those cases :santa:.
+ 
 
 ## Example use cases
-Some CI tools that already working with maven, for example maven plugins, like liquibase or sonar-scanner plugins,    
+Some CI tools that already working with maven, for example liquibase or sonar-scanner which both have maven plugins,    
 are the best suite for using the Vault Maven Plugin.  
   
 Java applications that use maven to build/package can also profit from it.     

@@ -1,6 +1,7 @@
 ---
 layout: page
 title: How to use it
+nav_order: 2
 ---
 
 ## How to configure it

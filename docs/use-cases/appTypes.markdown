@@ -1,6 +1,7 @@
 ---
 layout: page
-title: Practical use cases
+title: By Application Type
+parent: Practical use cases
 ---
 
 # 1. Other maven plugins
@@ -163,32 +164,7 @@ The above code will first fetch the secrets from vault with the vault-plugin, th
 After that you can run your java app with either [exec-maven-plugin](http://www.mojohaus.org/exec-maven-plugin/usage.html) or the [spring-boot-maven-plugin](https://docs.spring.io/spring-boot/docs/current/maven-plugin/reference/htmlsingle/)
 By running your application with maven, maven's system properties will be shared with your application.  
 
-### In case you are running locally
-If you want to debug your spring application locally, there are two ways to do this:  
-1.  In IntelliJ, you can run and debug maven goals, see [here](https://www.jetbrains.com/help/idea/run-debug-configuration-maven.html).  
-The catch is not to let spring boot plugin to fork its JVM from the initial maven process. see [here](https://youtrack.jetbrains.com/issue/IDEA-175246)  
-
-```xml
-<plugin>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-maven-plugin</artifactId>
-    <configuration>
-        <fork>false</fork>
-    </configuration>
-</plugin>
-```
-
-2. Or you can set a remote debugger on any IDE by adding spring boot JVM args for the debugger connexion.  
-
-```xml
-<plugin>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-maven-plugin</artifactId>
-    <configuration>
-        <jvmArguments>-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8282</jvmArguments>
-    </configuration>
-</plugin>
-```
+<p><img src="../assets/images/old%20vs%20new%20way.png"/></p>
 
 ### In case you have a Non-Spring Java application
 Spring boot manages system properties and environment variables differently that the standard way.  
@@ -298,7 +274,7 @@ By adding the followings to your pom.xml like so:
 And Voilà! :tada:  
 Now you just need to run `mvn vault:pull exec:exec`  
 The only thing to provide is the token to authenticate to Vault server (`<token>XXXXX</token>`).  
-Isn't that magical ? :mage_man:
+Isn't that magical ? :mage:
 
 # 3. Application that does not use Maven
 Many developers use .env files to manage environment variables on their localhost.  
